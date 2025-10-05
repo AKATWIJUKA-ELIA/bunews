@@ -55,7 +55,7 @@ export default function NotificationsScreen() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <Link href={{
-          pathname: '/postDetails/[id]',
+          pathname: '/post/[id]',
           params: { id: item.id },
         }} asChild >
           <TouchableOpacity style={styles.notificationItem}>
