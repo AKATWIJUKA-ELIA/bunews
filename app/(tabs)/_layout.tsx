@@ -1,35 +1,54 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
+import { Ionicons } from '@expo/vector-icons'; 
 
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
+const tabs: {
+  title: string;
+  name: string;
+  icon: { name: React.ComponentProps<typeof Ionicons>['name']; size: number };
+}[] = [
+  { title: 'Home', name: 'home', icon: { name: 'home', size: 28 } },
+  { title: 'Search', name: 'search', icon: { name: 'search', size: 28 } },
+  {title:"Post", name:"post", icon:{name:"add-circle", size:28}},
+  { title: 'Notifications', name: 'notifications', icon: { name: 'notifications', size: 28 } },
+  { title: 'Account', name: 'account', icon: { name: 'person', size: 28 } },
+];
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
+        headerShown: true,
+        tabBarStyle: { backgroundColor: '#05032bff', borderTopColor: 'transparent' },
+        // tabBarInactiveTintColor: '#4a3737a0',
+        tabBarActiveBackgroundColor:"'#6d6c8aff',",
+        tabBarActiveTintColor: '#007AFF',
+        headerTintColor: '#18125dff',
+        
+        // 👇 Customize the header bar
+    headerStyle: {
+      backgroundColor: '#05032bff',
+//       backdropFilter: 'blur(10px)',
+//       backgroundBlendMode:"multiply" ,
+      opacity: 0.1,
+      height: 25, // 🔥 This sets the header height
+    },
+    headerTitleStyle: {
+      fontSize: 20, // Text size
+      fontWeight: '700',
+    },
+    headerTitleAlign: 'left',
       }}>
-      <Tabs.Screen
-        name="index"
+        {tabs.map((tab) => (
+                <Tabs.Screen
+        name={tab.name}
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: tab.title,
+          tabBarIcon: ({ size }) => (
+            <Ionicons name={tab.icon.name} size={size} color={"white"} />
+          ),
         }}
       />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
+        ))}
     </Tabs>
   );
 }
