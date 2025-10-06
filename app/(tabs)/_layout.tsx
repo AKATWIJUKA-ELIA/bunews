@@ -1,4 +1,4 @@
-import { Tabs } from 'expo-router';
+import { Stack, Tabs } from 'expo-router';
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons'; 
 
@@ -12,6 +12,7 @@ const tabs: {
   {title:"Post", name:"post", icon:{name:"add-circle", size:28}},
   { title: 'Notifications', name: 'notifications', icon: { name: 'notifications', size: 28 } },
   { title: 'Account', name: 'account', icon: { name: 'person', size: 28 } },
+  { title: 'Account', name: 'index', icon: { name: 'person', size: 28 } },
 ];
 export default function TabLayout() {
   return (
@@ -38,6 +39,14 @@ export default function TabLayout() {
     },
     headerTitleAlign: 'left',
       }}>
+        <Stack.Screen
+        options={{
+          headerShown: true,
+          headerStyle: {
+            // Only supported properties here, e.g. backgroundColor
+          }
+        }}
+      />
         {tabs.map((tab) => (
                 <Tabs.Screen
         name={tab.name}

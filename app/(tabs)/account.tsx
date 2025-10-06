@@ -1,14 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
 
 import type { NavigationProp } from '@react-navigation/native';
 import { Stack } from "expo-router";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface AccountsPageProps {
   navigation: NavigationProp<any>;
 }
 
 const AccountsPage = ({ navigation }: AccountsPageProps) => {
+
+        const [user, setUser] = React.useState<any>(null);
+
+          useEffect(() => {
+  (async () => {
+    const userString = await AsyncStorage.getItem("user");
+    if (userString) {
+      const user = JSON.parse(userString);
+      setUser(user);
+    }
+  })();
+}, []);
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
         <Stack.Screen
@@ -23,6 +37,16 @@ const AccountsPage = ({ navigation }: AccountsPageProps) => {
       />
       {/* Profile Section */}
       <View style={styles.profileSection}>
+
+         <Avatar className="h-12 w-12">
+            <AvatarImage src={user?.profilePicture || "/placeholder.svg"} alt={""} />
+            <AvatarFallback>
+              {user?.username
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
+            </AvatarFallback>
+          </Avatar>
         <Image
           source={{ uri: "https://via.placeholder.com/100" }}
           style={styles.profileImage}
@@ -39,13 +63,13 @@ const AccountsPage = ({ navigation }: AccountsPageProps) => {
       <View style={styles.divider} />
 
       {/* Account Options */}
-      <View style={styles.optionsSection}>
+      {/* <View style={styles.optionsSection}>
         <OptionItem title="My Orders" icon="📦" onPress={() => navigation.navigate("Orders")} />
         <OptionItem title="Payment Methods" icon="💳" onPress={() => navigation.navigate("Payments")} />
         <OptionItem title="Security" icon="🔒" onPress={() => navigation.navigate("Security")} />
         <OptionItem title="Notifications" icon="🔔" onPress={() => navigation.navigate("Notifications")} />
         <OptionItem title="Help & Support" icon="🧾" onPress={() => navigation.navigate("Support")} />
-      </View>
+      </View> */}
 
       {/* Divider */}
       <View style={styles.divider} />
@@ -59,12 +83,12 @@ const AccountsPage = ({ navigation }: AccountsPageProps) => {
 };
 
 // OptionItem Component
-const OptionItem = ({ title, icon, onPress }) => (
-  <TouchableOpacity style={styles.optionItem} onPress={onPress}>
-    <Text style={styles.optionIcon}>{icon}</Text>
-    <Text style={styles.optionText}>{title}</Text>
-  </TouchableOpacity>
-);
+// const OptionItem = ({ title, icon, onPress }) => (
+//   <TouchableOpacity style={styles.optionItem} onPress={onPress}>
+//     <Text style={styles.optionIcon}>{icon}</Text>
+//     <Text style={styles.optionText}>{title}</Text>
+//   </TouchableOpacity>
+// );
 
 export default AccountsPage;
 

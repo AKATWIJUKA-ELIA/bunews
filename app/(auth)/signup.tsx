@@ -1,13 +1,27 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from "react-native";
-import { Link, router } from "expo-router";
+import { Link, router, Stack } from "expo-router";
+import useCreateUser from "@/hooks/useCreateUser";
+// import bcrypt from "bcryptjs";
+// import * as Crypto from 'expo-crypto';
 
 export default function SignUpScreen() {
+
   const [email, setEmail] = useState("");
+  const [userName, setuserName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+        const [phoneNumber, setphoneNumber] = useState("");
 
-  const handleSignup = () => {
+  const { CreateUser } = useCreateUser();
+// const hashPassword = async (plainPassword: string) => {
+//   const saltRounds = 10;
+//   const salt = await bcrypt.genSalt(saltRounds); // Generate the salt string
+//   const hashedPassword = await bcrypt.hash(plainPassword, salt); // Hash with salt string
+//   console.log("hash", hashedPassword);
+//   return hashedPassword;
+// };
+  const handleSignup = async () => {
     if (!email || !password || !confirmPassword) {
       Alert.alert("Error", "Please fill in all fields");
       return;
@@ -16,15 +30,51 @@ export default function SignUpScreen() {
       Alert.alert("Error", "Passwords do not match");
       return;
     }
+//     const hash = await hashPassword(password);
 
-    // TODO: Replace this with your registration logic
-    router.replace("/home");
+    try{
+        CreateUser({
+                username:userName,
+                email,
+                passwordHash:password,
+                role:"user",
+                reset_token:"",
+                isVerified:false,
+                reset_token_expires:0,
+                phoneNumber:phoneNumber,
+                profilePicture:"",
+                updatedAt:Date.now(),
+                lastLogin:Date.now(),
+        }).then((res)=>{
+                if(!res.success){
+                        Alert.alert("Error", res.message || "Signup failed");
+                        return;
+                }
+                Alert.alert("Success", "Account created successfully");
+                router.replace("/login");
+        })
+    }catch(err){
+        Alert.alert("Error", "Signup failed");
+        return;
+    }
+    
+    
   };
 
   return (
     <View style={styles.container}>
+        <Stack.Screen
+        options={{
+          title: ``, // dynamic title
+          headerTitleAlign: 'left',
+          
+          headerStyle: {
+                 backgroundColor: '#05032bff',
+           },
+        }}
+      />
       <Image
-        source={{ uri: "https://cdn-icons-png.flaticon.com/512/4201/4201973.png" }}
+        source={require("../../assets/images/icon.png")}  
         style={styles.logo}
       />
 
@@ -37,6 +87,24 @@ export default function SignUpScreen() {
         placeholderTextColor="#aaa"
         value={email}
         onChangeText={setEmail}
+      />
+      
+      <TextInput
+        placeholder="UserName"
+        style={styles.input}
+        placeholderTextColor="#aaa"
+        value={userName}
+        onChangeText={setuserName}
+      />
+
+      <TextInput
+        placeholder="phoneNumber"
+        style={styles.input}
+        placeholderTextColor="#aaa"
+        value={phoneNumber}
+        textContentType="telephoneNumber"
+        keyboardType="phone-pad"
+        onChangeText={setphoneNumber}
       />
 
       <TextInput
@@ -80,6 +148,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#fff",
     padding: 20,
+    marginTop: -150,
   },
   logo: {
     width: 100,

@@ -90,11 +90,8 @@ export const AuthenticateUser = action({
                         if (!user.success || !user.user) {
                                return { success:false ,status: 404,message: "User not Found",user:user.user };
                         }
-                        if (!user.user?.isVerified) {
-                               return { success:false ,status: 404,message: `This User is not verified pliz verify your Account via the email that was sent to ${user.user?.email} or contact Support`,user:user.user };
-                        }
                         
-                        const isMatch = await bcrypt.compare(args.password, user.user?.passwordHash ?? "");
+                        const isMatch = args.password === user.user?.passwordHash;
                         if (!isMatch) {
                           return { success:false ,status: 401,message: "Invalid Password",user:user.user };
                 }
@@ -131,3 +128,29 @@ export const GetCustomerByTokenAction = action({
     return { success: true, status: 200, message: "Success !", user: customer.user };
   },
 });
+
+export const UpdateUser = mutation({
+         args:{User:v.object({
+                _id: v.id("users"),
+                username: v.string(),
+                email: v.string(),
+                passwordHash: v.string(),
+                phoneNumber: v.optional(v.string()),
+                profilePicture: v.optional(v.string()),
+                isVerified: v.boolean(),
+                role: v.string(),
+                reset_token: v.optional(v.string()),
+                reset_token_expires:v.number(),
+                updatedAt: v.number(),
+                lastLogin: v.optional(v.number()),
+         })},handler:async(ctx,args)=>{
+              if(args.User){
+              const NewUser = await ctx.db.patch(args.User._id, {
+                ...args.User,
+                updatedAt: Date.now(),
+              });
+              return {succes:true, status: 20, message: "Success", user: NewUser};
+              }
+              
+              
+        }})

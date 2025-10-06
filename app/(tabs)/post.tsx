@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -12,11 +12,21 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import useCreatePost from '@/hooks/useCreatePost';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Id } from '@/convex/_generated/dataModel';
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 
 export default function CreatePostScreen() {
   const [content, setContent] = useState('');
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [category, setCategory] = useState<string | null>(null);
+//   const user = AsyncStorage.getItem('user');
+        const [user, setUser] = useState<any>(null);
+    const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
+    const [imagepreview, setImagePreview] = useState<string | null>(null);
+    const {CreatePost} = useCreatePost();
 
   const categories = [
     'Politics',
@@ -25,8 +35,17 @@ export default function CreatePostScreen() {
     'Culture',
     'Science',
     'Sports',
-  ];
+  ]
 
+  useEffect(() => {
+  (async () => {
+    const userString = await AsyncStorage.getItem("user");
+    if (userString) {
+      const user = JSON.parse(userString);
+      setUser(user);
+    }
+  })();
+}, []);
   // 🖼 Pick image from gallery
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -37,23 +56,67 @@ export default function CreatePostScreen() {
     });
 
     if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
+      setSelectedImage(result.assets[0] as unknown as File);
+        setImagePreview(result.assets[0].uri);
     }
   };
 
   // 🚀 Submit handler
-  const handlePost = () => {
+  const handlePost = async () => {
+        // const NewUser = await user ? user : 
     if (!content.trim()) {
       Alert.alert('Empty Post', 'Please write something before posting.');
       return;
     }
+    const TIMEOUT_MS = 90000;  //
+        let imageUrl = "";
+         const withTimeout = <T,>(promise: Promise<T>, ms: number): Promise<T> => {
+                        return Promise.race([
+                          promise,
+                          new Promise<T>((_, reject) =>
+                            setTimeout(() => reject(new Error("Request timed out")), ms)
+                          
+                          ),
+                        ]);
+                      };
 
-    // This is where you’d send data to backend
-    console.log({
-      content,
-      category,
-      image: selectedImage,
-    });
+                  try {
+                        await withTimeout((async () => {
+                         // Step 1: Get a short-lived upload URL
+                        const postUrl = await generateUploadUrl();
+                                if (!postUrl) throw new Error("Failed to get upload URL");
+
+                                const formData = new FormData();
+                                formData.append("file", {
+                                        uri: imagepreview || "", // e.g. "file:///..."
+                                        name: selectedImage?.name,
+                                        type: selectedImage?.type
+                                    } as any);
+                                    const result = await fetch(postUrl, {
+                                        method: "POST",
+                                        headers: { "Content-Type":" multipart/form-data" },
+                                        body: formData,
+                                  });
+                                  
+                                  if (!result.ok) throw new Error("Failed to ucpload image");
+                                  const res= await result.json();
+                                        imageUrl = res.storageId;
+                                        console.log("Image uploaded successfully:", imageUrl);
+
+                        })(), TIMEOUT_MS);} catch(errrr) {
+                        alert("Image upload timed out. Please try again.");
+                        alert(errrr);
+                        return;
+                        }
+
+  await CreatePost({
+    title: content.slice(0, 30) + (content.length > 30 ? '...' : ''),
+    authorId:user?._id as Id<"users"> ,
+        content,
+        category: category || 'General',
+        excerpt: content.slice(0, 100) + (content.length > 100 ? '...' : ''),
+        postImage: imageUrl || '',
+  });
 
     Alert.alert('Success', 'Your news update has been posted!');
     setContent('');
@@ -116,7 +179,7 @@ export default function CreatePostScreen() {
         {/* 🖼 Image Picker */}
         {selectedImage ? (
           <View style={styles.imageContainer}>
-            <Image source={{ uri: selectedImage }} style={styles.imagePreview} />
+            <Image source={{ uri: imagepreview||"" }} style={styles.imagePreview} />
             <TouchableOpacity
               onPress={() => setSelectedImage(null)}
               style={styles.removeImage}>

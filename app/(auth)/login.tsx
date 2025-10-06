@@ -1,28 +1,49 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from "react-native";
-import { Link, router } from "expo-router";
+import { Link, router, Stack } from "expo-router";
+import useAuthenticate from "@/hooks/useAuthenticate";
+
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const handleLogin = () => {
+        const { Authenticate } = useAuthenticate();
+  const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert("Error", "Please fill in all fields");
       return;
     }
-    // TODO: Replace this with your authentication logic
-    router.replace("/home"); // Navigate to main app
+    await Authenticate( email, password ).then((res) => {
+      if (!res.success) {
+        Alert.alert("Error", res.message || "Login failed");
+        return;
+      }
+        Alert.alert("Success", "Logged in successfully");
+         router.replace("/(tabs)/home"); // Navigate to main app
+    });
+
+   
   };
 
   return (
     <View style={styles.container}>
+        <Stack.Screen
+        options={{
+          title: ``, // dynamic title
+          headerTitleAlign: 'left',
+          
+          headerStyle: {
+                
+                 backgroundColor: '#05032bff',
+           },
+        }}
+      />
       <Image
-        source={{ uri: "https://cdn-icons-png.flaticon.com/512/4201/4201973.png" }}
+      source={require("../../assets/images/icon.png")}  
         style={styles.logo}
       />
-
-      <Text style={styles.title}>Welcome Back 👋</Text>
+        <Text style={styles.title}>BU News</Text>
+      {/* <Text style={styles.title}>Welcome Back </Text> */}
       <Text style={styles.subtitle}>Log in to continue</Text>
 
       <TextInput

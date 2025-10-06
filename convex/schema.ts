@@ -5,7 +5,7 @@ export default defineSchema({
         posts:defineTable({
                 content: v.string(),
                 authorId: v.string(),
-                postImages: v.optional(v.array(v.string())),
+                postImage: v.string(),
                 category: v.optional(v.string()),
                 likes: v.number(),
                 comments: v.optional(v.array(v.object({
