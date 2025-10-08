@@ -43,3 +43,18 @@ export const CreatePost = mutation({
                         return postsWithUrls;
                 }
         })
+export const GetPostById = query({
+                args:{
+                        postId: v.id("posts"),
+                },handler:async(ctx,args)=>{
+                        const post = await ctx.db.get(args.postId);
+                        if(!post){
+                                return {success:false,message:"Post not found",status:404,post:null};
+                        }
+                        const postWithUrl = {
+                                ...post,
+                                postImage: post.postImage ? await ctx.storage.getUrl(post.postImage) : "",
+                        }
+                        return {success:true,message:"Post found",status:200,post:postWithUrl};
+                }
+        })

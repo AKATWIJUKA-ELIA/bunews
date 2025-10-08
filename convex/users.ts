@@ -97,7 +97,7 @@ export const AuthenticateUser = action({
                         if (!isMatch) {
                           return { success:false ,status: 401,message: "Invalid Password",user:user.user };
                 }
-                   return { success:true ,status: 201,message: "Success",user:user.user };
+                   return { success:true ,status: 201,message: "Success",user:{...user.user} };
 }
 })
 export const GetUserByToken = query({

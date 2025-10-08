@@ -33,17 +33,20 @@ export default function NewsCard({ post }: { post: PostWithAuthor }) {
       }
 
       <View style={styles.actions}>
+        {/* retweets */}
+        <TouchableOpacity style={styles.action}>
+          <Ionicons name="repeat-outline" size={20} color="#555" />
+          <Text style={styles.count}>13</Text>
+        </TouchableOpacity>
+
+        
         {/* comments */}
         <TouchableOpacity style={styles.action}>
           <Ionicons name="chatbubble-outline" size={20} color="#555" />
           <Text style={styles.count}>25</Text>
         </TouchableOpacity>
 
-        {/* retweets */}
-        <TouchableOpacity style={styles.action}>
-          <Ionicons name="repeat-outline" size={20} color="#555" />
-          <Text style={styles.count}>13</Text>
-        </TouchableOpacity>
+        
 
         {/* likes */}
         <TouchableOpacity style={styles.action}>
@@ -53,7 +56,7 @@ export default function NewsCard({ post }: { post: PostWithAuthor }) {
 
         {/* shares */}
         <TouchableOpacity style={styles.action}>
-          <Ionicons name="share-outline" size={20} color="#555" />
+          <Ionicons name="share-social-sharp" size={20} color="#555" />
         </TouchableOpacity>
       </View>
     </View>
