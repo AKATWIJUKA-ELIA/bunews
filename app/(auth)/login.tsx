@@ -29,12 +29,13 @@ export default function LoginScreen() {
     <View style={styles.container}>
         <Stack.Screen
         options={{
+                headerShown: false,
           title: ``, // dynamic title
           headerTitleAlign: 'left',
           
           headerStyle: {
-                
                  backgroundColor: '#05032bff',
+                 
            },
         }}
       />
@@ -86,7 +87,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#fff",
     padding: 20,
-        marginTop: -150,
   },
   logo: {
     width: 100,

@@ -65,6 +65,7 @@ export default function SignUpScreen() {
     <View style={styles.container}>
         <Stack.Screen
         options={{
+                headerShown: false,
           title: ``, // dynamic title
           headerTitleAlign: 'left',
           
@@ -148,7 +149,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#fff",
     padding: 20,
-    marginTop: -150,
   },
   logo: {
     width: 100,

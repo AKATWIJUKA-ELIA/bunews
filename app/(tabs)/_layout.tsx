@@ -18,8 +18,8 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerShown: true,
-        tabBarStyle: { backgroundColor: '#05032bff', borderTopColor: 'transparent' },
+        headerShown: false,
+                tabBarStyle: { backgroundColor: '#fff', borderTopColor: 'transparent' },
         // tabBarInactiveTintColor: '#4a3737a0',
         tabBarActiveBackgroundColor:"'#6d6c8aff',",
         tabBarActiveTintColor: '#007AFF',
@@ -27,11 +27,11 @@ export default function TabLayout() {
         
         // 👇 Customize the header bar
     headerStyle: {
-      backgroundColor: '#05032bff',
+      backgroundColor: 'rgba(125, 25, 25, 1)',
 //       backdropFilter: 'blur(10px)',
 //       backgroundBlendMode:"multiply" ,
       opacity: 0.1,
-      height: 25, // 🔥 This sets the header height
+      height: 35, // 🔥 This sets the header height
     },
     headerTitleStyle: {
       fontSize: 20, // Text size
@@ -53,7 +53,7 @@ export default function TabLayout() {
         options={{
           title: tab.title,
           tabBarIcon: ({ size }) => (
-            <Ionicons name={tab.icon.name} size={size} color={"white"} />
+            <Ionicons name={tab.icon.name} size={size} color={"black"} />
           ),
         }}
       />
