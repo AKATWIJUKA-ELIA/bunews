@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text,SafeAreaView, StyleSheet, Image, Animated, FlatList } from 'react-native';
 import FeedList from "@/components/Feed/FeedList";
-import Header from "@/components/Feed/Header/Header";
+import Header from "@/components/Header/Header";
 import useGetAllPosts from '@/hooks/useGetAllPosts';
 import Loader from '@/components/Loader/loader'
 
@@ -21,9 +21,9 @@ export default function NewsFeedScreen() {
                 setNewsPosts(posts);
         }, [posts]);
         
-        if (loading) {
-                return <Loader />;
-        }
+        // if (loading) {
+        //         return <Loader />;
+        // }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 70,
+    height: 83,
     backgroundColor: '#fff',
     zIndex: 10,
     elevation: 5,
@@ -69,6 +69,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     borderBottomWidth: 0.3,
-    borderColor: '#ddd',
+    borderColor: '#0008ffdd',
   },
 });

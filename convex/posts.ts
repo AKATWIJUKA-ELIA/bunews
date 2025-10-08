@@ -58,3 +58,41 @@ export const GetPostById = query({
                         return {success:true,message:"Post found",status:200,post:postWithUrl};
                 }
         })
+
+                export const LikePost = mutation({
+                args:{
+                        postId:v.id("posts"),
+                        userId:v.id("users"),
+                },handler:async(ctx,args)=>{
+                        const post = await ctx.db.get(args.postId);
+                        if(!post){
+                                return {success:false,message:"Post not found",status:404,post:null};
+                        }
+                        const existingInteraction = await ctx.db.query("interactions")
+                        .filter((q) => q.and(
+                                q.eq(q.field("userId"), args.userId),
+                                q.eq(q.field("postId"), args.postId),
+                                q.eq(q.field("type"), "like"),
+                        ))
+                        .unique();
+                        if (!existingInteraction) {
+                                 const updatedPost = await ctx.db.patch(args.postId,{
+                                likes: post.likes+1
+                                
+                        })
+                        await ctx.db.insert("interactions",{
+                                        userId: args.userId,
+                                        postId: args.postId,
+                                        type: "like",
+                                })
+                        return {success:true,message:"Post updated successfully",status:200,post:updatedPost};
+                                
+                        }
+                        await ctx.db.patch(args.postId,{
+                                likes: post.likes-1})
+                        await ctx.db.delete(existingInteraction._id);
+                        return { success: true, message: "User has disliked this post", status: 200, post: null };
+                       
+                }
+        })
+               

@@ -37,5 +37,19 @@ export default defineSchema({
   .index("by_isVerified", ["isVerified"])
   .index("by_reset_token_expires", ["reset_token_expires"])
   .index("by_reset_token_and_by_reset_token_expires", ["reset_token", "reset_token_expires"]),
+
+  interactions: defineTable({
+                userId: v.id("users"),
+                postId: v.id("posts"),
+                type: v.union(v.literal("view"), v.literal("like"), v.literal("share"), v.literal("comment")),
+        }).index("by_user", ["userId"]),
+
+        comments: defineTable({
+        postId: v.id("posts"),
+        commentorId: v.id("users"),
+        content: v.string(),
+        likes: v.number(),
+        updatedAt: v.number(),
+        }).index("by_post", ["postId"]),
         
 });

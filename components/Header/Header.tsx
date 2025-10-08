@@ -10,7 +10,11 @@ export default function Header() {
         source={{ uri: 'https://i.pravatar.cc/50' }}
         style={styles.avatar}
       />
-      <Text style={styles.title}>News Feed</Text>
+      {/* <Text style={styles.title}>News Feed</Text> */}
+      <Image
+        source={require("../../../bunews/assets/images/icon.png")}
+        style={styles.avatar}
+      />
       <Link href={{
                 pathname: '/settings',
       }} >
@@ -28,6 +32,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 10,
+    paddingTop:50,
+    paddingLeft:5,
 //     borderBottomWidth: 0.4,
 //     borderColor: '#ddd',
     flex: 1,
