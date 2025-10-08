@@ -63,7 +63,9 @@ export const GetUserById = query({
         args:{id: v.id("users")},
               handler: async (ctx, args) => {
                      const Customer = await ctx.db.query("users").filter((q)=> q.eq(q.field("_id"), args.id)).first() 
-                    return Customer
+                    return {...Customer,
+                        profilePicture: Customer?.profilePicture ? await ctx.storage.getUrl(Customer.profilePicture) : "",
+                    }
                     },
                     })
 export const GetUserByEmail = query({
@@ -98,7 +100,7 @@ export const AuthenticateUser = action({
                    return { success:true ,status: 201,message: "Success",user:user.user };
 }
 })
-export const GetCustomerByToken = query({
+export const GetUserByToken = query({
                 args:{token:v.string()},
                 handler:async(ctx,args)=>{
                         
@@ -119,7 +121,7 @@ export const GetCustomerByTokenAction = action({
         args: { token: v.string() },
         handler: async (ctx, args): Promise<Response> => {
     // Call the registered query using ctx.runQuery
-    const customer = await ctx.runQuery(api.users.GetCustomerByToken, { token: args.token });
+    const customer = await ctx.runQuery(api.users.GetUserByToken, { token: args.token });
 
     if (!customer.user) {
       return { success: false, status: 404, message: "Token is Invalid", user: null };

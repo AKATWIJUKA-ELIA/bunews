@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react
 import { Ionicons } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
 import { Stack } from 'expo-router';
+import { Id } from '@/convex/_generated/dataModel';
 
 const mockData = [
   {
@@ -70,7 +71,7 @@ const comments = [
 
 export default function PostDetailsScreen() {
         const route = useRoute();
-        const { id } = route.params as { id: number };
+        const { id } = route.params as { id: Id<"posts"> };
         // console.log("Post ID:", id);
         const post = mockData.find(p => p.id === id.toString()) || mockData[0]; 
         

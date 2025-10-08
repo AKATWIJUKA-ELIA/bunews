@@ -1,4 +1,4 @@
-import {  v } from "convex/values";
+import {  ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
 export const generateUploadUrl = mutation(async (ctx)=>{
@@ -8,13 +8,10 @@ export const generateUploadUrl = mutation(async (ctx)=>{
 export const CreatePost = mutation({
         args:{
                 authorId: v.id("users"),
-                title: v.string(),
                 content: v.string(),
-                excerpt: v.string(),
                 category: v.string(),
-                postImage: v.string(),
-                upvotes: v.number(),
-                downvotes: v.number(),
+                postImage: v.optional(v.string()),
+                likes: v.number(),
         },handler:async(ctx,args)=>{
                 try{
                        
@@ -24,8 +21,11 @@ export const CreatePost = mutation({
                 }) 
                 // await ctx.runMutation(internal.sendEmail.sendEmail,{})
                 return {success:true,message:"Success your post was successfully created ",status:200,post:post};
-        }catch{
-                       return {success:false,message:"Error creating post",status:500,post:null};
+        } catch (error) {
+                       if (error instanceof ConvexError) {
+                               return {success:false,message:error.message,status:500,post:null};
+                       }
+                       return {success:false,message:String(error),status:500,post:null};
                 }
                 
         }

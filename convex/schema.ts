@@ -4,9 +4,9 @@ import {v} from "convex/values";
 export default defineSchema({
         posts:defineTable({
                 content: v.string(),
-                authorId: v.string(),
-                postImage: v.string(),
-                category: v.optional(v.string()),
+                authorId: v.id("users"),
+                postImage: v.optional(v.string()),
+                category: v.string(),
                 likes: v.number(),
                 comments: v.optional(v.array(v.object({
                         commentorId: v.string(),

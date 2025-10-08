@@ -1,50 +1,30 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text,SafeAreaView, StyleSheet, Image, Animated, FlatList } from 'react-native';
 import FeedList from "@/components/Feed/FeedList";
 import Header from "@/components/Feed/Header/Header";
+import useGetAllPosts from '@/hooks/useGetAllPosts';
+import Loader from '@/components/Loader/loader'
 
 export default function NewsFeedScreen() {
+
+        const { postsWithAuthors: posts, loading } = useGetAllPosts();
+        // const newsPosts = posts?.filter(post => post !== undefined);
         const scrollY = useRef(new Animated.Value(0)).current;
         const headerTranslateY = scrollY.interpolate({
                 inputRange: [0, 100],
                 outputRange: [0, -100], // Header slides up by 80px
                 extrapolate: 'clamp',
         });
-        const mockData = [
-  {
-    id: '1',
-    author: 'Daily Monitor',
-    username: '@dmonitor',
-    time: '2h',
-    content:
-      'Uganda has tightened and increased security as it approaches the 2025/26 Presidential Elections.',
-    image: 'https://picsum.photos/600/400',
-  },
-  {
-    id: '2',
-    author: 'TechDigest',
-    username: '@techdigest',
-    time: '5h',
-    content: 'AI is revolutionizing journalism with real-time fact-checking tools.',
-    image: 'https://picsum.photos/600/350',
-  },
-  {
-    id: '3',
-    author: 'HealthNews',
-    username: '@healthnews',
-    time: '1h',
-    content: 'New advancements in cancer research show promising results.',
-    image: 'https://picsum.photos/600/300',
-  },
-  {
-    id: '4',
-    author: 'SportsDaily',
-    username: '@sportsdaily',
-    time: '3h',
-    content: 'Local team wins championship in a thrilling final match.',
-    image: 'https://picsum.photos/600/250',
-  }
-];
+        const [newsPosts, setNewsPosts] = useState(posts); // consider: useState<PostWithAuthor[] | undefined>(posts);
+
+        useEffect(() => {
+                setNewsPosts(posts);
+        }, [posts]);
+        
+        if (loading) {
+                return <Loader />;
+        }
+
   return (
     <SafeAreaView style={styles.container}>
          <Animated.View style={[styles.header, { transform: [{ translateY: headerTranslateY }] }]}>
@@ -52,15 +32,15 @@ export default function NewsFeedScreen() {
          </Animated.View>
 
          <Animated.FlatList
-        data={mockData}
-         keyExtractor={(item) => item.id.toString()}
+        data={newsPosts ?? []} // ensure data is always an array
+         keyExtractor={(item, index) => (item && item._id ? item._id.toString() : index.toString())}
         contentContainerStyle={{ paddingTop: 70 }} // space for header
         scrollEventThrottle={16}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: true }
         )}
-         renderItem={({ item }) => (
+         renderItem={({ item }) => ( // <-- destructure here
         <FeedList item={item} />
         )}
          />

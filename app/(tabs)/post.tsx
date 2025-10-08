@@ -17,10 +17,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Id } from '@/convex/_generated/dataModel';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
+import { uploadImage } from '@/lib/utils';
+import { fetch } from 'expo/fetch';
+import { File } from 'expo-file-system';
+
 
 export default function CreatePostScreen() {
   const [content, setContent] = useState('');
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedImage, setSelectedImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
   const [category, setCategory] = useState<string | null>(null);
 //   const user = AsyncStorage.getItem('user');
         const [user, setUser] = useState<any>(null);
@@ -40,6 +44,7 @@ export default function CreatePostScreen() {
   useEffect(() => {
   (async () => {
     const userString = await AsyncStorage.getItem("user");
+//     console.log("userString", userString);
     if (userString) {
       const user = JSON.parse(userString);
       setUser(user);
@@ -56,66 +61,59 @@ export default function CreatePostScreen() {
     });
 
     if (!result.canceled) {
-      setSelectedImage(result.assets[0] as unknown as File);
-        setImagePreview(result.assets[0].uri);
+      setSelectedImage(result.assets[0]);
+      setImagePreview(result.assets[0].uri);
     }
   };
 
-  // 🚀 Submit handler
+
   const handlePost = async () => {
-        // const NewUser = await user ? user : 
+        let imageUrl = "";
     if (!content.trim()) {
       Alert.alert('Empty Post', 'Please write something before posting.');
       return;
     }
-    const TIMEOUT_MS = 90000;  //
-        let imageUrl = "";
-         const withTimeout = <T,>(promise: Promise<T>, ms: number): Promise<T> => {
-                        return Promise.race([
-                          promise,
-                          new Promise<T>((_, reject) =>
-                            setTimeout(() => reject(new Error("Request timed out")), ms)
-                          
-                          ),
-                        ]);
-                      };
+    await uploadImage(selectedImage?.uri||"").then(async (imagefile)=>{
+        if(!imagefile){
+                Alert.alert("Error", "Image conversion failed, please try again");
+                return;
+        }
+        const postUrl = await generateUploadUrl();
+                        if (!postUrl) throw new Error("Failed to get upload URL");
 
-                  try {
-                        await withTimeout((async () => {
-                         // Step 1: Get a short-lived upload URL
-                        const postUrl = await generateUploadUrl();
-                                if (!postUrl) throw new Error("Failed to get upload URL");
+                        const result = await fetch(postUrl, {
+                          method: "POST",
+                          headers: { "Content-Type": imagefile?.type},
+                          body: imagefile ?? undefined,
+                        });
 
-                                const formData = new FormData();
-                                formData.append("file", {
-                                        uri: imagepreview || "", // e.g. "file:///..."
-                                        name: selectedImage?.name,
-                                        type: selectedImage?.type
-                                    } as any);
-                                    const result = await fetch(postUrl, {
-                                        method: "POST",
-                                        headers: { "Content-Type":" multipart/form-data" },
-                                        body: formData,
-                                  });
-                                  
-                                  if (!result.ok) throw new Error("Failed to ucpload image");
-                                  const res= await result.json();
-                                        imageUrl = res.storageId;
-                                        console.log("Image uploaded successfully:", imageUrl);
+                        if (!result.ok) throw new Error("Failed to upload image");
+                        const res = await result.json();
+                        imageUrl = res.storageId;
+        console.log("imagefile from upload", imagefile);
+        }).catch((err)=>{
+                console.log("Image upload failed", err);
+                Alert.alert("Error", "Image conversion failed, please try again");
+                return;
+        });
 
-                        })(), TIMEOUT_MS);} catch(errrr) {
-                        alert("Image upload timed out. Please try again.");
-                        alert(errrr);
-                        return;
-                        }
+        
+                  
 
   await CreatePost({
-    title: content.slice(0, 30) + (content.length > 30 ? '...' : ''),
-    authorId:user?._id as Id<"users"> ,
+    authorId:user?.User_id as Id<"users"> ,
         content,
         category: category || 'General',
-        excerpt: content.slice(0, 100) + (content.length > 100 ? '...' : ''),
         postImage: imageUrl || '',
+  }).then((res)=>{
+        if(!res.success){
+                Alert.alert("Error", res.message || "Post creation failed");
+                return;
+        }
+        Alert.alert("Success", "Post created successfully");
+        setContent('');
+        setSelectedImage(null);
+        setCategory(null);
   });
 
     Alert.alert('Success', 'Your news update has been posted!');
@@ -179,7 +177,7 @@ export default function CreatePostScreen() {
         {/* 🖼 Image Picker */}
         {selectedImage ? (
           <View style={styles.imageContainer}>
-            <Image source={{ uri: imagepreview||"" }} style={styles.imagePreview} />
+            <Image source={{ uri: imagepreview || selectedImage.uri || "" }} style={styles.imagePreview} />
             <TouchableOpacity
               onPress={() => setSelectedImage(null)}
               style={styles.removeImage}>

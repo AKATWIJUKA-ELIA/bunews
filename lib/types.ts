@@ -8,16 +8,16 @@ export interface SessionPayload extends JWTPayload {
 }
 
 export type Post = {
-  title: string
+        _id?: Id<"posts">
   authorId: Id<"users">
-  excerpt: string
   content: string
   category: string
-  postImage: string
-  upvotes?: number
-  downvotes?: number
+  postImage?: string|null
+ likes?: number
   updatedAt?: string
+        _creationTime?: number
 }
+export type PostWithAuthor = (Post & { author: User|null|undefined }) | undefined;
 
 export interface User {
         _id: Id<"users">,

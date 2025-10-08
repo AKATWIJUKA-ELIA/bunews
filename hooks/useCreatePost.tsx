@@ -7,14 +7,11 @@ const useCreatePost = () => {
         const CreatePost = async (Post:Post) =>{
                 try{
                 const response = await create({
-                        title: Post.title,
                         authorId: Post.authorId,
                         content: Post.content,
                         category: Post.category,
-                        excerpt: Post.excerpt,
-                        postImage: Post.postImage,
-                        upvotes: 0,
-                        downvotes: 0,
+                        postImage: Post.postImage||null||"",
+                        likes: 0,
                 });
                  if(!response?.success){
                         return { success: false, message: response.message ,  status: 400 };

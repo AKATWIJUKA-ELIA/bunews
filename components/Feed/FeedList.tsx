@@ -1,16 +1,10 @@
 import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import NewsCard from './NewsCard/NewsCard';
+import { PostWithAuthor } from '@/lib/types';
 
 interface FeedListProps {
-  item: {
-        id: string;
-        author: string;
-        username: string;
-        time: string;
-        content: string;
-        image?: string;
-      };
+  item: PostWithAuthor| undefined;
  }
 
 

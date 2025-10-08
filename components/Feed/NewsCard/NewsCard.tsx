@@ -2,47 +2,56 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
+import { PostWithAuthor } from '@/lib/types';
+import { formatDate } from '@/lib/utils';
 
-export default function NewsCard({ post }: { post: any }) {
+export default function NewsCard({ post }: { post: PostWithAuthor }) {
   return (
     <View style={styles.card}>
       <View style={styles.header}>
         <Image
-          source={{ uri: 'https://i.pravatar.cc/40' }}
+          source={{ uri: post?.author?.profilePicture }}
           style={styles.avatar}
         />
         <View style={styles.info}>
-          <Text style={styles.author}>{post.author}</Text>
+          <Text style={styles.author}>{post?.author?.username}</Text>
           <Text style={styles.username}>
-            {post.username} • {post.time}
+            {post?.author?.username} • {formatDate(post?._creationTime||0)}
           </Text>
         </View>
       </View>
 
-      <Text style={styles.content}>{post.content}</Text>
+      <Text style={styles.content}>{post?.content}</Text>
 
-      {post.image && 
+      {post?.postImage && 
       <Link href={{
           pathname: '/post/[id]',
-          params: { id: post.id },
+          params: { id: post._id?.toString() ?? '' },
         }} >
-        <Image source={{ uri: post.image }} style={styles.image} />
+        <Image source={{ uri: post.postImage }} style={styles.image} />
       </Link>
       }
 
       <View style={styles.actions}>
+        {/* comments */}
         <TouchableOpacity style={styles.action}>
           <Ionicons name="chatbubble-outline" size={20} color="#555" />
           <Text style={styles.count}>25</Text>
         </TouchableOpacity>
+
+        {/* retweets */}
         <TouchableOpacity style={styles.action}>
           <Ionicons name="repeat-outline" size={20} color="#555" />
           <Text style={styles.count}>13</Text>
         </TouchableOpacity>
+
+        {/* likes */}
         <TouchableOpacity style={styles.action}>
           <Ionicons name="heart-outline" size={20} color="#555" />
-          <Text style={styles.count}>100</Text>
+          <Text style={styles.count}>{post?.likes}</Text>
         </TouchableOpacity>
+
+        {/* shares */}
         <TouchableOpacity style={styles.action}>
           <Ionicons name="share-outline" size={20} color="#555" />
         </TouchableOpacity>

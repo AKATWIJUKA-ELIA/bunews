@@ -8,6 +8,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const index = () => {
         // Check if user is signed in
+        const me = true
         const [signedIn, setSignedIn] = useState(false);
         useEffect(() => {
                 const checkUser = async () => {
@@ -17,7 +18,7 @@ const index = () => {
                         }
                 }
                 checkUser();
-        }, []);
+        }, [me===true]);
         
         if (!signedIn) {
         return <Redirect href="/login" />
