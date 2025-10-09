@@ -60,7 +60,7 @@ export default function PostDetailsScreen() {
           <Text style={styles.commentsHeader}>Comments</Text>
           {commentsData && commentsData.length > 0 ? commentsData.map((comment) => (
             <View key={comment._id} style={styles.commentItem}>
-              <Image source={{ uri: comment.user?.profilePicture }} style={styles.commentAvatar} />
+              <Image source={{ uri: comment.user?.profilePicture||"" }} style={styles.commentAvatar} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.commentUser}>
                   {comment.user?.username} <Text style={styles.commentUsername}>{comment.user?.username}</Text>

@@ -14,7 +14,7 @@ type Response = {
             email: string,
             passwordHash: string,
             phoneNumber?: string,
-            profilePicture?: string,
+            profilePicture?: string|null,
             isVerified: boolean,
             role: string,
             reset_token?: string,
@@ -47,8 +47,10 @@ export const CreateUser = mutation({
                         if(existing){
                                 return {success:false,message:"This Email Already Exisits",status:400};
                         }
+                        const profilePictureUrl = args.profilePicture ? await ctx.storage.getUrl(args.profilePicture) : "";
                 const user = await ctx.db.insert("users",{
-                        ...args
+                        ...args,
+                        profilePicture: profilePictureUrl||"",
                 }) 
                 // await ctx.runMutation(internal.sendEmail.sendEmail,{})
                 return {success:true,message:"Success your Account was successfully created ",status:200,user:user};
@@ -63,9 +65,7 @@ export const GetUserById = query({
         args:{id: v.id("users")},
               handler: async (ctx, args) => {
                      const Customer = await ctx.db.query("users").filter((q)=> q.eq(q.field("_id"), args.id)).first() 
-                    return {...Customer,
-                        profilePicture: Customer?.profilePicture ? await ctx.storage.getUrl(Customer.profilePicture) : "",
-                    }
+                    return {...Customer}
                     },
                     })
 export const GetUserByEmail = query({
@@ -77,7 +77,9 @@ export const GetUserByEmail = query({
                         if (!customer) {
                                return { success:false ,status: 404,message: "User not Found",user:null };
                         }
-                        return { success:true, status: 200, message: "User found", user: customer };
+                        return { success:true, status: 200, message: "User found", user: {
+                                ...customer,
+                        } };
                 }
                 
         })

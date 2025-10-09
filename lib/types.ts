@@ -25,7 +25,7 @@ export interface User {
         email: string,
         passwordHash: string,
         phoneNumber?: string,
-        profilePicture?: string,
+        profilePicture?: string|null,
         isVerified: boolean | false,
         role: string|"",
         reset_token?:string

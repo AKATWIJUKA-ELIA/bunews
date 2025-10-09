@@ -46,6 +46,7 @@ export default function SearchScreen() {
 
   return (
     <View style={styles.container}>
+        
       {/* 🔍 Search Bar */}
       <View style={styles.searchContainer}>
         <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
