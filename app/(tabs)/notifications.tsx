@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '700',
     paddingVertical: 14,
+    marginTop:3,
   },
   notificationItem: {
     flexDirection: 'row',

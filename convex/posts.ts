@@ -58,6 +58,24 @@ export const GetPostById = query({
                         return {success:true,message:"Post found",status:200,post:postWithUrl};
                 }
         })
+export const GetPostsByAuthor = query({
+                args:{
+                        authorId: v.id("users"),
+                },handler:async(ctx,args)=>{
+                        const posts = await ctx.db.query("posts")
+                        .withIndex("byAuthor", (q) => q.eq("authorId", args.authorId))
+                        .order("desc")
+                        .collect();
+                        const postsWithUrls = await Promise.all(posts.map(async(post)=>{
+                                return {
+                                        ...post,
+                                        postImage: post.postImage ? await ctx.storage.getUrl(post.postImage) : "",
+                                }
+                        }
+                        ))
+                        return postsWithUrls;
+                }
+        })
 
                 export const LikePost = mutation({
                 args:{

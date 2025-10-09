@@ -18,10 +18,12 @@ export default function Header() {
 }, []);
   return (
     <View style={styles.header}>
+      <Link href="/timeline"  style={styles.avatar} >
       <Image
         source={{ uri: user?.profilePicture || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" }}
         style={styles.avatar}
       />
+      </Link>
       {/* <Text style={styles.title}>News Feed</Text> */}
       <Image
         source={require("../../../bunews/assets/images/icon.png")}

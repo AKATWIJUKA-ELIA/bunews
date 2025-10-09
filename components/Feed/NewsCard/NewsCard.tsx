@@ -10,7 +10,7 @@ import useGetPostComments from '@/hooks/useGetPostComments';
 
 
 export default function NewsCard({ post }: { post: PostWithAuthor }) {
-                const { commentOnPost,likePost } = useInteractWithPost();
+                const { likePost } = useInteractWithPost();
                         const handleLike = async () => {
                 await likePost(post?._id as Id<"posts">, post?.author?._id!).then((res)=>{
                         console.log("Like response:", res);
@@ -93,9 +93,10 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingLeft: 10,
     borderRadius: 10,
-    borderBottomWidth: 0.9,
+    borderWidth: 0.9,
     borderLeftWidth: 0.9,
     borderColor: '#2200ffff',
+    marginVertical: 6,
   },
   contentwithImage:{
         marginTop: -10,

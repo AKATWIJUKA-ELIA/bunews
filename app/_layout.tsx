@@ -26,6 +26,8 @@ export default function RootLayout() {
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="timeline" options={{ title: "User Timeline" }}
+/>
       </Stack>
       {/* <StatusBar style="auto" /> */}
       </ConvexProvider>

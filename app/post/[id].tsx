@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TextInput, KeyboardAvoidingView, Platform, Button, TouchableOpacity } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { Stack } from 'expo-router';
@@ -11,6 +11,8 @@ import useInteractWithPost from '@/hooks/useInteractWithPost';
 import useGetPostComments from '@/hooks/useGetPostComments';
 import { formatDate } from '@/lib/utils';
 import { CommentWithUser } from '@/lib/types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 export default function PostDetailsScreen() {
@@ -20,10 +22,22 @@ export default function PostDetailsScreen() {
   const { postWithAuthor: post, loading } = useGetPostById(id);
   const { commentOnPost, } = useInteractWithPost();
   const { commentsWithAuthors: commentsData, } = useGetPostComments(id);
+  const [user, setUser] = useState<any>(null);
+
+    useEffect(() => {
+  (async () => {
+    const userString = await AsyncStorage.getItem("user");
+    console.log("userString", userString);
+    if (userString) {
+      const user = JSON.parse(userString);
+      setUser(user);
+    }
+  })();
+}, []);
 
   const handleComment=async(comment:string) => {
         if(!comment.trim()) return;
-        await commentOnPost(id, post?.author?._id!, comment).then((res)=>{
+        await commentOnPost(id, user.User_id, comment).then((res)=>{
                 console.log("Comment response:", res);
                 setComment('');
         }).catch((err)=>{console.log(err)});

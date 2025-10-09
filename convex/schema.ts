@@ -8,11 +8,6 @@ export default defineSchema({
                 postImage: v.optional(v.string()),
                 category: v.string(),
                 likes: v.number(),
-                comments: v.optional(v.array(v.object({
-                        commentorId: v.string(),
-                        comment: v.string(),
-                        timestamp: v.number(),
-                }))),
                 reposts: v.optional(v.array(v.object({
                         repostorId: v.string(),
                         timestamp: v.number(),
@@ -51,5 +46,9 @@ export default defineSchema({
         likes: v.number(),
         updatedAt: v.number(),
         }).index("by_post", ["postId"]),
-        
+        followers: defineTable({
+                userId: v.id("users"),
+                followerId: v.id("users"),
+                timestamp: v.number(),
+        }).index("by_user", ["userId"]),
 });

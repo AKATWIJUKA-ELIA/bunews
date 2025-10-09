@@ -46,7 +46,7 @@ export default function SearchScreen() {
 
   return (
     <View style={styles.container}>
-        
+
       {/* 🔍 Search Bar */}
       <View style={styles.searchContainer}>
         <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
@@ -103,6 +103,7 @@ export default function SearchScreen() {
 
 const styles = StyleSheet.create({
   container: {
+        
     flex: 1,
     backgroundColor: '#fff',
     paddingHorizontal: 14,
@@ -115,7 +116,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     marginVertical: 10,
-    marginTop: 26,
+    marginTop: 40,
   },
   searchIcon: {
     marginRight: 6,
