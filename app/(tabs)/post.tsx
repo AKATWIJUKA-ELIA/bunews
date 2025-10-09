@@ -20,6 +20,7 @@ import { api } from '@/convex/_generated/api';
 import { uploadImage } from '@/lib/utils';
 import { fetch } from 'expo/fetch';
 import { File } from 'expo-file-system';
+import { router } from 'expo-router';
 
 
 export default function CreatePostScreen() {
@@ -127,7 +128,7 @@ export default function CreatePostScreen() {
       {/* 🧭 Top Bar */}
       <View style={styles.header}>
         <TouchableOpacity>
-          <Ionicons name="close" size={26} color="#000" />
+          <Ionicons name="close" size={26} color="#000" onPress={()=>router.replace("/")} />
         </TouchableOpacity>
         <Text style={styles.title}>Create Post</Text>
         <TouchableOpacity onPress={handlePost}>
@@ -139,7 +140,7 @@ export default function CreatePostScreen() {
         {/* 👤 Avatar + Input */}
         <View style={styles.row}>
           <Image
-            source={{ uri: 'https://i.pravatar.cc/50' }}
+            source={{ uri: user?.profilePicture || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" }}
             style={styles.avatar}
           />
           <TextInput

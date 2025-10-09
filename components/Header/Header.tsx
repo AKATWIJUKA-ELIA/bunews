@@ -1,13 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Header() {
+         const [user, setUser] = useState<any>(null);
+           useEffect(() => {
+  (async () => {
+    const userString = await AsyncStorage.getItem("user");
+    console.log("userString", userString);
+    if (userString) {
+      const user = JSON.parse(userString);
+      setUser(user);
+    }
+  })();
+}, []);
   return (
     <View style={styles.header}>
       <Image
-        source={{ uri: 'https://i.pravatar.cc/50' }}
+        source={{ uri: user?.profilePicture || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" }}
         style={styles.avatar}
       />
       {/* <Text style={styles.title}>News Feed</Text> */}
@@ -16,7 +28,7 @@ export default function Header() {
         style={styles.avatar}
       />
       <Link href={{
-                pathname: '/settings',
+                pathname: '/account',
       }} >
       <Ionicons name="settings-outline" size={24} color="#000"  />
       </Link>

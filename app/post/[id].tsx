@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TextInput, KeyboardAvoidingView, Platform, Button, TouchableOpacity } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { Id } from '@/convex/_generated/dataModel';
@@ -7,58 +7,10 @@ import Loader from '@/components/Loader/loader';
 import useGetPostById from '@/hooks/useGetPostById';
 import NewsCard from '@/components/Feed/NewsCard/NewsCard';
 import { PostWithAuthor } from '@/lib/types';
-
-
-const comments = [
-  {
-    id: '1',
-    user: 'John Doe',
-    username: '@johndoe',
-    text: 'This is an important move!',
-    avatar: 'https://i.pravatar.cc/40?img=5',
-    time: '1h',
-  },
-  {
-    id: '2',
-    user: 'Sarah K.',
-    username: '@sarahk',
-    text: 'Hope this ensures peace and transparency.',
-    avatar: 'https://i.pravatar.cc/40?img=6',
-    time: '30m',
-  },
-  {
-        id: '3',
-        user: 'Mike L.',
-        username: '@mikel',
-        text: 'What are the implications for the tech industry?',
-        avatar: 'https://i.pravatar.cc/40?img=7',
-        time: '15m',
-  },
-  {
-        id: '4',
-        user: 'Anna W.',
-        username: '@annaw',
-        text: 'Great to see such initiatives being taken!',
-        avatar: 'https://i.pravatar.cc/40?img=8',
-        time: '5m',
-  },
-  {
-        id: '5',
-        user: 'David R.',
-        username: '@davidr',
-        text: 'Looking forward to more updates on this.',
-        avatar: 'https://i.pravatar.cc/40?img=9',
-        time: '2m',
-  },
-  {
-        id: '6',
-        user: 'Emily S.',
-        username: '@emilys',
-        text: 'This could change everything!',
-        avatar: 'https://i.pravatar.cc/40?img=10',
-        time: '1m',
-  }
-];
+import useInteractWithPost from '@/hooks/useInteractWithPost';
+import useGetPostComments from '@/hooks/useGetPostComments';
+import { formatDate } from '@/lib/utils';
+import { CommentWithUser } from '@/lib/types';
 
 
 export default function PostDetailsScreen() {
@@ -66,6 +18,16 @@ export default function PostDetailsScreen() {
   const { id } = route.params as { id: Id<"posts"> };
   const [comment, setComment] = useState('');
   const { postWithAuthor: post, loading } = useGetPostById(id);
+  const { commentOnPost, } = useInteractWithPost();
+  const { commentsWithAuthors: commentsData, } = useGetPostComments(id);
+
+  const handleComment=async(comment:string) => {
+        if(!comment.trim()) return;
+        await commentOnPost(id, post?.author?._id!, comment).then((res)=>{
+                console.log("Comment response:", res);
+                setComment('');
+        }).catch((err)=>{console.log(err)});
+  }
 
   if (loading) {
     return <Loader />;
@@ -93,21 +55,24 @@ export default function PostDetailsScreen() {
           keyboardShouldPersistTaps="handled"
         >
           <NewsCard post={post as PostWithAuthor} />
-          
+
           {/* Comments Section */}
           <Text style={styles.commentsHeader}>Comments</Text>
-          {comments.map((comment) => (
-            <View key={comment.id} style={styles.commentItem}>
-              <Image source={{ uri: comment.avatar }} style={styles.commentAvatar} />
+          {commentsData && commentsData.length > 0 ? commentsData.map((comment) => (
+            <View key={comment._id} style={styles.commentItem}>
+              <Image source={{ uri: comment.user?.profilePicture||"" }} style={styles.commentAvatar} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.commentUser}>
-                  {comment.user} <Text style={styles.commentUsername}>{comment.username}</Text>
+                  {comment.user?.username} <Text style={styles.commentUsername}>{comment.user?.username}</Text>
                 </Text>
-                <Text style={styles.commentText}>{comment.text}</Text>
-                <Text style={styles.commentTime}>{comment.time} ago</Text>
+                <Text style={styles.commentText}>{comment.content}</Text>
+                <Text style={styles.commentTime}>{formatDate(comment._creationTime||0)} ago</Text>
               </View>
             </View>
-          ))}
+          )): (
+                <Text style={{textAlign:'center', color:'#9a1515ff', marginTop:20}}>No comments yet. Be the first to comment!</Text>
+          
+          )}
         </ScrollView>
         <View style={styles.inputContainer}>
           <TextInput
@@ -119,6 +84,9 @@ export default function PostDetailsScreen() {
             multiline
             returnKeyType="send"
           />
+                <TouchableOpacity onPress={() => handleComment(comment)} style={styles.SendButton}>
+                        <Text style={{color:'#00a6ffff', fontWeight:'600'}}>Reply</Text>
+                </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     </View>
@@ -142,11 +110,25 @@ const styles = StyleSheet.create({
   commentUsername: { color: '#666' },
   commentText: { marginTop: 2, fontSize: 14 },
   commentTime: { fontSize: 12, color: '#999', marginTop: 2 },
+  SendButton:{
+        marginLeft: 8,
+        color: '#00a6ffff',
+        fontWeight: '600',
+        fontSize: 16,
+        borderWidth: 1,
+        borderColor: '#00a6ffff',
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderRadius: 20,
+  },
   inputContainer: {
-    position: 'absolute',
+//     position: 'absolute',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
     bottom: 0,
     left: 0,
-    right: 0,
+    right: 30,
     backgroundColor: '#fff',
     padding: 12,
     borderTopWidth: 1,
@@ -154,6 +136,9 @@ const styles = StyleSheet.create({
   },
   input: {
     minHeight: 45,
+    minWidth: "70%",
+    maxWidth: "80%",
+    textOverflow:'wrap',
     maxHeight: 100,
     borderWidth: 1,
     borderColor: "#0400ffff",

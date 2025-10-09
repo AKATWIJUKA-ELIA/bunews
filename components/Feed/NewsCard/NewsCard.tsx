@@ -6,6 +6,8 @@ import { PostWithAuthor } from '@/lib/types';
 import { formatDate } from '@/lib/utils';
 import useInteractWithPost from '@/hooks/useInteractWithPost';
 import { Id } from '@/convex/_generated/dataModel';
+import useGetPostComments from '@/hooks/useGetPostComments';
+
 
 export default function NewsCard({ post }: { post: PostWithAuthor }) {
                 const { commentOnPost,likePost } = useInteractWithPost();
@@ -14,6 +16,8 @@ export default function NewsCard({ post }: { post: PostWithAuthor }) {
                         console.log("Like response:", res);
                 }).catch((err)=>{console.log(err)});
         }
+          const { data:comments} = useGetPostComments(post?._id as Id<"posts">);
+
   return (
           <View style={styles.postContainer}>
     
@@ -24,6 +28,7 @@ export default function NewsCard({ post }: { post: PostWithAuthor }) {
               <View  style={{ flexDirection: 'row', gap: 24, alignItems: 'center' , flex: 0 }}>
                 <Text style={styles.author}>{post?.author?.username} </Text>
                 <Text style={styles.username}>@{post?.author?.username} • <Text style={styles.date}>{formatDate(post?._creationTime||0)}</Text></Text>
+                <Text style={styles.follow}>follow</Text>
               </View>
             </View>
     
@@ -42,7 +47,7 @@ export default function NewsCard({ post }: { post: PostWithAuthor }) {
                   
               <TouchableOpacity style={styles.action}>
                 <Ionicons name="chatbubble-outline" size={20} color="#0077ffff" />
-                <Text style={styles.count}>{post?.content.length}</Text>
+                <Text style={styles.count}>{comments?.length}</Text>
               </TouchableOpacity>
     
               <TouchableOpacity style={styles.action}>
@@ -117,6 +122,14 @@ paddingLeft: 30,
   },
   date:{
         color: '#777777ff',
+  },
+    follow:{
+        color: '#040ab7ff',
+        fontSize: 12,
+        borderWidth: 0.5,
+        padding:6,
+        borderRadius:10,
+        borderColor: '#2200ffff',
   },
   content: {
     fontSize: 15,

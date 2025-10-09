@@ -1,41 +1,31 @@
-
-import { Stack } from 'expo-router'
+import { Stack, Redirect } from 'expo-router'
 import React, { useEffect, useState } from 'react'
-import { View ,Text, StyleSheet } from 'react-native'
-import Loader from '@/components/Loader/loader'
-import { Redirect } from 'expo-router'
+import { View, Text, StyleSheet } from 'react-native'
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Loader from '@/components/Loader/loader'
 
-const index = () => {
-        // Check if user is signed in
-        const me = true
-        const [signedIn, setSignedIn] = useState(false);
-        useEffect(() => {
-                const checkUser = async () => {
-                        const user = await AsyncStorage.getItem('user');
-                        if (user) {
-                                setSignedIn(true);
-                        }
-                }
-                checkUser();
-        }, [me===true]);
-        
-        if (!signedIn) {
-        return <Redirect href="/login" />
+const Index = () => {
+  const [signedIn, setSignedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const user = await AsyncStorage.getItem('user');
+      setSignedIn(!!user);
+      setLoading(false);
+    };
+    checkUser();
+  }, []);
+
+  if (loading) {
+    return <Loader />;
   }
-  return <Redirect href="/(tabs)/home" />
-   
-}
-const styles = StyleSheet.create({
-        container: {
-                // flex: 1,
-                height:'100%',
-                width:'100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: 20,
-                backgroundColor:'white'
-        }
- })
 
-export default index
+  if (!signedIn) {
+    return <Redirect href="/login" />;
+  }
+  return <Redirect href="/(tabs)/home" />;
+};
+
+
+export default Index;

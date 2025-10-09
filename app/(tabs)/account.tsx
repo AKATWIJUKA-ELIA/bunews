@@ -8,6 +8,8 @@ import Loader from "@/components/Loader/loader";
 import { getUserById } from "@/lib/convex";
 import { Id } from "@/convex/_generated/dataModel";
 import useLogOut from "@/hooks/useLogOut";
+import { UserProfile } from "@/lib/types";
+
 export interface User {
         _id?: Id<"users">|undefined,
         username?: string,
@@ -39,20 +41,6 @@ export default function SettingsScreen() {
   })();
 }, []);
 
-        // useEffect(() => {
-        //         const fetchUser = async () => {
-        //                 if(user && user.User_id){
-        //                         await getUserById(user._id).then((res)=>{
-        //                                 if(!res.user){
-        //                                         setAuthUser(null);
-        //                                         return;
-        //                                 }
-        //                                 setAuthUser(res.user);
-        //                         })
-        //                 }
-        //         };
-        //         fetchUser();
-        // }, [user]);
 
  
   const [darkMode, setDarkMode] = useState(false);
@@ -80,9 +68,9 @@ export default function SettingsScreen() {
       />
       {/* Profile Section */}
       <View style={styles.profileSection}>
-        <Image source={{ uri: user.profilePicture||"" }} style={styles.avatar} />
+        <Image source={{ uri: user.profilePicture||"" }} alt={user.profilePicture} style={styles.avatar} />
         <View>
-          <Text style={styles.name}>{user.Username}</Text>
+          <Text style={styles.name}>{user?.Username}</Text>
           <Text style={styles.email}>{user.email}</Text>
         </View>
       </View>

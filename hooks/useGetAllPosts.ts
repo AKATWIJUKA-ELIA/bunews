@@ -30,7 +30,7 @@ const useGetAllPosts = () => {
                 })
             );
             if (!cancelled) {
-                setPostsWithAuthors(postsWithAuthorsData);
+                setPostsWithAuthors(postsWithAuthorsData as PostWithAuthor[]);
                 setLoading(false);
             }
         };

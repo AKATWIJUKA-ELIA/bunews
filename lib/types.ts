@@ -25,7 +25,7 @@ export interface User {
         email: string,
         passwordHash: string,
         phoneNumber?: string,
-        profilePicture?: string,
+        profilePicture?: string|null,
         isVerified: boolean | false,
         role: string|"",
         reset_token?:string
@@ -54,4 +54,17 @@ export interface UserProfile {
         role: string; 
         isVerified: boolean;
         expiresAt:Date
+}
+
+export interface Comment {
+        _id?: Id<"comments">,
+        postId: Id<"posts">,
+        commentorId: Id<"users">,
+        content: string,
+        likes: number,
+        updatedAt: number,
+        _creationTime?:number,
+}
+export interface CommentWithUser extends Comment {
+        user?: User | null;        
 }
