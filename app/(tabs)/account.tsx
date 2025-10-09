@@ -153,11 +153,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     paddingHorizontal: 16,
     paddingTop: 20,
+
   },
   profileSection: {
     flexDirection: "row",
     alignItems: "center",
     gap: 15,
+        marginTop: 20,
   },
   avatar: {
     width: 60,

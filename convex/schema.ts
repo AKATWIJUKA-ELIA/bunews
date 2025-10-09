@@ -8,17 +8,20 @@ export default defineSchema({
                 postImage: v.optional(v.string()),
                 category: v.string(),
                 likes: v.number(),
-                comments: v.optional(v.array(v.object({
-                        commentorId: v.string(),
-                        comment: v.string(),
-                        timestamp: v.number(),
-                }))),
                 reposts: v.optional(v.array(v.object({
                         repostorId: v.string(),
                         timestamp: v.number(),
                 }))),
         }).index("byAuthor", ["authorId"])
         .index("byCategory", ["category"]),
+        reposts: defineTable({
+                reposterId: v.id("users"),
+                originalPostId: v.id("posts"),
+                content: v.string(),
+                repostImage: v.optional(v.string()),
+        })
+        .index("byOriginalPost", ["originalPostId"])
+        .index("byReposter", ["reposterId"]),
 
         users: defineTable({
     username: v.string(),
@@ -51,5 +54,9 @@ export default defineSchema({
         likes: v.number(),
         updatedAt: v.number(),
         }).index("by_post", ["postId"]),
-        
+        followers: defineTable({
+                userId: v.id("users"),
+                followerId: v.id("users"),
+                timestamp: v.number(),
+        }).index("by_user", ["userId"]),
 });

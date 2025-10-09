@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert, KeyboardAvoidingView, Platform } from "react-native";
 import { Link, router, Stack } from "expo-router";
 import useAuthenticate from "@/hooks/useAuthenticate";
 
@@ -39,6 +39,11 @@ export default function LoginScreen() {
            },
         }}
       />
+      <KeyboardAvoidingView
+                  style={{flex:1, justifyContent:"center", alignItems:"center", width:"100%"}}
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              keyboardVerticalOffset={80} // adjust if needed for your header
+            >
       <Image
       source={require("../../assets/images/icon.png")}  
         style={styles.logo}
@@ -76,6 +81,7 @@ export default function LoginScreen() {
           </TouchableOpacity>
         </Link>
       </View>
+      </KeyboardAvoidingView>
     </View>
   );
 }

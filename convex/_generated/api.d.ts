@@ -14,8 +14,10 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as comments from "../comments.js";
+import type * as followers from "../followers.js";
 import type * as image from "../image.js";
 import type * as posts from "../posts.js";
+import type * as reposts from "../reposts.js";
 import type * as users from "../users.js";
 
 /**
@@ -28,8 +30,10 @@ import type * as users from "../users.js";
  */
 declare const fullApi: ApiFromModules<{
   comments: typeof comments;
+  followers: typeof followers;
   image: typeof image;
   posts: typeof posts;
+  reposts: typeof reposts;
   users: typeof users;
 }>;
 export declare const api: FilterApi<
