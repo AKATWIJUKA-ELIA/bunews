@@ -55,3 +55,16 @@ export interface UserProfile {
         isVerified: boolean;
         expiresAt:Date
 }
+
+export interface Comment {
+        _id?: Id<"comments">,
+        postId: Id<"posts">,
+        commentorId: Id<"users">,
+        content: string,
+        likes: number,
+        updatedAt: number,
+        _creationTime?:number,
+}
+export interface CommentWithUser extends Comment {
+        user?: User | null;        
+}
