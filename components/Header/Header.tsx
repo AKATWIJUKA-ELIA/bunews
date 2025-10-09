@@ -26,7 +26,7 @@ export default function Header() {
       </Link>
       {/* <Text style={styles.title}>News Feed</Text> */}
       <Image
-        source={require("../../../bunews/assets/images/icon.png")}
+        source={require("../../app/icon.png")}
         style={styles.avatar}
       />
       <Link href={{

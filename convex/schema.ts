@@ -14,6 +14,14 @@ export default defineSchema({
                 }))),
         }).index("byAuthor", ["authorId"])
         .index("byCategory", ["category"]),
+        reposts: defineTable({
+                reposterId: v.id("users"),
+                originalPostId: v.id("posts"),
+                content: v.string(),
+                repostImage: v.optional(v.string()),
+        })
+        .index("byOriginalPost", ["originalPostId"])
+        .index("byReposter", ["reposterId"]),
 
         users: defineTable({
     username: v.string(),

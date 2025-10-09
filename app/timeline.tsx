@@ -94,7 +94,7 @@ export default function UserTimelineScreen() {
       {/* Timeline Section */}
       <Text style={styles.sectionHeader}>Posts by You</Text>
       {posts?.length === 0 ? (
-        <Text style={styles.noPosts}>No posts yet.</Text>
+        <Text style={styles.noPosts}>No posts yet. Your Posts will Appear Here</Text>
       ) : (
         <FlatList
           data={posts}

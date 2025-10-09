@@ -1,17 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Link } from 'expo-router';
+import { Link, useNavigation } from 'expo-router';
 import { PostWithAuthor } from '@/lib/types';
 import { formatDate } from '@/lib/utils';
 import useInteractWithPost from '@/hooks/useInteractWithPost';
 import { Id } from '@/convex/_generated/dataModel';
 import useGetPostComments from '@/hooks/useGetPostComments';
+import { FontAwesome } from '@expo/vector-icons';
 
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+type RootStackParamList = {
+  repostScreen: { post: PostWithAuthor };
+  // add other routes here if needed
+};
 
 export default function NewsCard({ post }: { post: PostWithAuthor }) {
+                const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
                 const { likePost } = useInteractWithPost();
+                const [liked, setLiked] = useState(false);
                         const handleLike = async () => {
+
                 await likePost(post?._id as Id<"posts">, post?.author?._id!).then((res)=>{
                         console.log("Like response:", res);
                 }).catch((err)=>{console.log(err)});
@@ -25,10 +35,10 @@ export default function NewsCard({ post }: { post: PostWithAuthor }) {
     
             <View style={styles.postHeader }>
               <Image source={{ uri: post?.author?.profilePicture||""}} style={styles.avatar} />
-              <View  style={{ flexDirection: 'row', gap: 24, alignItems: 'center' , flex: 0 }}>
+              <View  style={{ flexDirection: 'row', gap: 20, alignItems: 'center' , flex: 0 }}>
                 <Text style={styles.author}>{post?.author?.username} </Text>
                 <Text style={styles.username}>@{post?.author?.username} • <Text style={styles.date}>{formatDate(post?._creationTime||0)}</Text></Text>
-                <Text style={styles.follow}>follow</Text>
+                {/* <Text style={styles.follow}>follow</Text> */}
               </View>
             </View>
     
@@ -49,15 +59,14 @@ export default function NewsCard({ post }: { post: PostWithAuthor }) {
                 <Ionicons name="chatbubble-outline" size={20} color="#0077ffff" />
                 <Text style={styles.count}>{comments?.length}</Text>
               </TouchableOpacity>
-    
-              <TouchableOpacity style={styles.action}>
+              <TouchableOpacity style={styles.action} onPress={()=>{navigation.navigate("repostScreen", { post })}}>
                 <Ionicons name="repeat-outline" size={20} color="#555" />
                 <Text style={styles.count}>5</Text>
               </TouchableOpacity>
     
     
                 <TouchableOpacity style={styles.action} onPress={()=>handleLike()}>
-                <Ionicons name="heart-outline" size={20} color="#ff00008f" />
+                <FontAwesome name="heart" size={20} color="#ff0000ff" />
                 <Text style={styles.count}>{post?.likes}</Text>
               </TouchableOpacity>
     
