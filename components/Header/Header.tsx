@@ -3,8 +3,12 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTheme } from "../../app/ThemeContext";
+import { lightTheme, darkTheme } from "../../constants/theme";
 
 export default function Header() {
+         const { theme } = useTheme();
+        const colors = theme === "dark" ? darkTheme : lightTheme;
          const [user, setUser] = useState<any>(null);
            useEffect(() => {
   (async () => {
@@ -17,7 +21,7 @@ export default function Header() {
   })();
 }, []);
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, ]}>
       <Link href="/timeline"  style={styles.avatar} >
       <Image
         source={{ uri: user?.profilePicture || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" }}
@@ -32,7 +36,7 @@ export default function Header() {
       <Link href={{
                 pathname: '/account',
       }} >
-      <Ionicons name="settings-outline" size={24} color="#000"  />
+      <Ionicons name="settings-outline" size={24} color={colors.icon}  />
       </Link>
       
     </View>

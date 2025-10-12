@@ -99,7 +99,7 @@ export default function PostDetailsScreen() {
             returnKeyType="send"
           />
                 <TouchableOpacity onPress={() => handleComment(comment)} style={styles.SendButton}>
-                        <Text style={{color:'#00a6ffff', fontWeight:'600'}}>Reply</Text>
+                        <Text style={{color:'#ffae00ff', fontWeight:'600'}}>Reply</Text>
                 </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         fontSize: 16,
         borderWidth: 1,
-        borderColor: '#00a6ffff',
+        borderColor: '#ffc800ff',
         paddingHorizontal: 12,
         paddingVertical: 8,
         borderRadius: 20,

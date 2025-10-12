@@ -9,6 +9,8 @@ import { getUserById } from "@/lib/convex";
 import { Id } from "@/convex/_generated/dataModel";
 import useLogOut from "@/hooks/useLogOut";
 import { UserProfile } from "@/lib/types";
+import { useTheme } from "../ThemeContext";
+import { lightTheme, darkTheme } from "../../constants/theme";
 
 export interface User {
         _id?: Id<"users">|undefined,
@@ -44,7 +46,9 @@ export default function SettingsScreen() {
 
  
   const [darkMode, setDarkMode] = useState(false);
+  const { theme, setTheme } = useTheme();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const colors = theme === "dark" ? darkTheme : lightTheme;
         const handleLogOut = async () => {
                 await signOut();
                 setUser(null);
@@ -54,11 +58,12 @@ export default function SettingsScreen() {
                 return <Loader />;
         }
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
+    <ScrollView style={[styles.container]} contentContainerStyle={{ padding: 20,flex:1, backgroundColor: colors.background }}>
         <Stack.Screen
         options={{
           title: `Account `, // dynamic title
           headerTitleAlign: 'left',
+          headerShown: false,
           headerStyle: {
                  backgroundColor: '#05032bff',
                  
@@ -84,11 +89,10 @@ export default function SettingsScreen() {
       <View style={styles.settingRow}>
         <Ionicons name="moon-outline" size={22} color="#007AFF" />
         <Text style={styles.settingLabel}>Dark Mode</Text>
-        <Switch
-          value={darkMode}
-          onValueChange={setDarkMode}
-          trackColor={{ false: "#ccc", true: "#007AFF" }}
-        />
+      <Switch
+        value={theme === "dark"}
+        onValueChange={() => setTheme(theme === "dark" ? "light" : "dark")}
+      />
       </View>
 
       <View style={styles.settingRow}>
@@ -102,7 +106,7 @@ export default function SettingsScreen() {
       </View>
 
       {/* Divider */}
-      <View style={styles.divider} />
+      {/* <View style={styles.divider} /> */}
 
       {/* Account Section */}
       <Text style={styles.sectionTitle}>Account</Text>
@@ -127,7 +131,7 @@ export default function SettingsScreen() {
       </TouchableOpacity>
 
       {/* Divider */}
-      <View style={styles.divider} />
+      {/* <View style={styles.divider} /> */}
 
       {/* About Section */}
       <Text style={styles.sectionTitle}>About</Text>
@@ -151,9 +155,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingHorizontal: 16,
-    paddingTop: 20,
-
+    paddingHorizontal: 0,
+    paddingTop: 0,
   },
   profileSection: {
     flexDirection: "row",

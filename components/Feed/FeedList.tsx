@@ -2,7 +2,8 @@ import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import NewsCard from './NewsCard/NewsCard';
 import { PostWithAuthor } from '@/lib/types';
-import { Link } from 'expo-router';
+import { useTheme } from "../../app/ThemeContext";
+import { lightTheme, darkTheme } from "../../constants/theme";
 
 interface FeedListProps {
   item: PostWithAuthor| undefined;
@@ -10,10 +11,12 @@ interface FeedListProps {
 
 
 export default function FeedList({ item }: FeedListProps) {
+        const { theme } = useTheme();
+  const colors = theme === "dark" ? darkTheme : lightTheme;
   return (
-        <View>
+        <View style={{backgroundColor:colors.background}}>
                 <NewsCard post={item} />
-                <View style={styles.separator} />
+                <View style={[styles.separator,{backgroundColor:colors.background}]} />
         </View>
 
   );

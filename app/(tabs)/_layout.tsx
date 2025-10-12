@@ -1,6 +1,9 @@
 import { Stack, Tabs } from 'expo-router';
 import React from 'react';
-import { Ionicons } from '@expo/vector-icons'; 
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from "../ThemeContext";
+import { lightTheme, darkTheme } from "../../constants/theme";
+
 
 const tabs: {
   title: string;
@@ -15,15 +18,17 @@ const tabs: {
   { title: 'Account', name: 'index', icon: { name: 'person', size: 28 } },
 ];
 export default function TabLayout() {
+        const { theme } = useTheme();
+  const colors = theme === "dark" ? darkTheme : lightTheme;
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-                tabBarStyle: { backgroundColor: '#fff', borderTopColor: 'transparent' },
+                tabBarStyle: {  backgroundColor:colors.background , borderTopColor: 'transparent' },
         // tabBarInactiveTintColor: '#4a3737a0',
         tabBarActiveBackgroundColor:"'#6d6c8aff',",
         tabBarActiveTintColor: '#007AFF',
-        headerTintColor: '#18125dff',
+        headerTintColor: '#e9e9e9ff',
         
         // 👇 Customize the header bar
     headerStyle: {
@@ -41,7 +46,7 @@ export default function TabLayout() {
       }}>
         <Stack.Screen
         options={{
-          headerShown: true,
+          headerShown: false,
           headerStyle: {
             // Only supported properties here, e.g. backgroundColor
           }
@@ -53,7 +58,7 @@ export default function TabLayout() {
         options={{
           title: tab.title,
           tabBarIcon: ({ size }) => (
-            <Ionicons name={tab.icon.name} size={size} color={"black"} />
+            <Ionicons name={tab.icon.name} size={size} color={"#0d18e2ff"} />
           ),
         }}
       />

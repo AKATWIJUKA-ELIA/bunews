@@ -8,8 +8,9 @@ import useInteractWithPost from '@/hooks/useInteractWithPost';
 import { Id } from '@/convex/_generated/dataModel';
 import useGetPostComments from '@/hooks/useGetPostComments';
 import { FontAwesome } from '@expo/vector-icons';
-
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useTheme } from "../../../app/ThemeContext";
+import { lightTheme, darkTheme } from "../../../constants/theme";
 
 type RootStackParamList = {
   repostScreen: { post: PostWithAuthor };
@@ -17,6 +18,8 @@ type RootStackParamList = {
 };
 
 export default function NewsCard({ post }: { post: PostWithAuthor }) {
+         const { theme } = useTheme();
+        const colors = theme === "dark" ? darkTheme : lightTheme;
                 const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
                 const { likePost } = useInteractWithPost();
                 const [liked, setLiked] = useState(false);
@@ -29,15 +32,15 @@ export default function NewsCard({ post }: { post: PostWithAuthor }) {
           const { data:comments} = useGetPostComments(post?._id as Id<"posts">);
 
   return (
-          <View style={styles.postContainer}>
+          <View style={[styles.postContainer, { backgroundColor: colors.background,borderColor: colors.borderColor }]}>
     
             
     
             <View style={styles.postHeader }>
               <Image source={{ uri: post?.author?.profilePicture||"https://www.gravatar.com/avatar/?d=mp"}} style={styles.avatar} />
               <View  style={{ flexDirection: 'row', gap: 20, alignItems: 'center' , flex: 0 }}>
-                <Text style={styles.author}>{post?.author?.username} </Text>
-                <Text style={styles.username}>@{post?.author?.username} • <Text style={styles.date}>{formatDate(post?._creationTime||0)}</Text></Text>
+                <Text style={[styles.author,{color:colors.text}]}>{post?.author?.username} </Text>
+                <Text style={[styles.username,{color:colors.icon}]}>@{post?.author?.username} • <Text style={styles.date}>{formatDate(post?._creationTime||0)}</Text></Text>
                 {/* <Text style={styles.follow}>follow</Text> */}
               </View>
             </View>
@@ -47,7 +50,7 @@ export default function NewsCard({ post }: { post: PostWithAuthor }) {
             <View style={styles.contentwithImage}>
     
             <View>
-                    <Text style={styles.content}>{post?.content}</Text>
+                    <Text style={[styles.content,{color:colors.text}]}>{post?.content}</Text>
                     <Link href={`/post/${post?._id}`} >
                     {post?.postImage && <Image source={{ uri: post?.postImage }} style={styles.image} />}
                     </Link>
@@ -57,22 +60,22 @@ export default function NewsCard({ post }: { post: PostWithAuthor }) {
                   
               <TouchableOpacity style={styles.action}>
                 <Ionicons name="chatbubble-outline" size={20} color="#0077ffff" />
-                <Text style={styles.count}>{comments?.length}</Text>
+                <Text style={[styles.count,{color:colors.text}]}>{comments?.length}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.action} onPress={()=>{navigation.navigate("repostScreen", { post })}}>
                 <Ionicons name="repeat-outline" size={20} color="#555" />
-                <Text style={styles.count}>5</Text>
+                <Text style={[styles.count,{color:colors.text}]}>5</Text>
               </TouchableOpacity>
     
     
                 <TouchableOpacity style={styles.action} onPress={()=>handleLike()}>
                 <FontAwesome name="heart" size={20} color="#ff0000ff" />
-                <Text style={styles.count}>{post?.likes}</Text>
+                <Text style={[styles.count,{color:colors.text}]}>{post?.likes}</Text>
               </TouchableOpacity>
     
               
               <TouchableOpacity style={styles.action}>
-                <Ionicons name="share-social-sharp" size={20} color="#2200ffff" />
+                <Ionicons name="share-social-sharp" size={20} color={colors.icon} />
               </TouchableOpacity>
               </View>
             </View>
