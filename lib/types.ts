@@ -28,6 +28,7 @@ export interface User {
         profilePicture?: string|null,
         isVerified: boolean | false,
         role: string|"",
+        about?:string,
         reset_token?:string
         reset_token_expires:number,
         updatedAt: number,
@@ -44,6 +45,8 @@ export interface UpstreamUser {
         isVerified: boolean | false,
         role: string|"",
         reset_token?:string
+        about?:string,
+        bannerImage?:string,
         reset_token_expires:number,
         updatedAt: number,
         lastLogin?: number,

@@ -6,6 +6,8 @@ interface User {
         Username: string;
          email:string;
         profilePicture:string,
+        about?:string,
+        bannerImage?:string,
 }
 const useSaveUser = ()=>{
         const saveUser = async (user:User)=>{

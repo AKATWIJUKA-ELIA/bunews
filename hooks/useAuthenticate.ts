@@ -9,6 +9,8 @@ interface UsertoSave {
         Username: string|"";
          email:string|"";
         profilePicture:string|"",
+        about?:string|"",
+        bannerImage?:string|"",
 }
       type response={
         success:boolean
@@ -22,6 +24,8 @@ interface UsertoSave {
                 phoneNumber?: string,
                 profilePicture?: string|null,
                 isVerified: boolean,
+                about?:string,
+                bannerImage?:string,
                 role: string,
                 reset_token?: string,
                 reset_token_expires?:number,
@@ -52,8 +56,10 @@ const useAuthenticate = () => {
                         const usertosave:UsertoSave = { 
                                 User_id: user?._id as Id<"users">,
                                 Username:user?.username||"",
-                                 email:user?.email||"",
+                                email:user?.email||"",
                                 profilePicture:user?.profilePicture||"",
+                                about:user?.about||"",
+                                bannerImage:user?.bannerImage||"",
                         }
                         await saveUser.saveUser(usertosave)
                           if (user?._id) {

@@ -34,7 +34,7 @@ export default function NewsCard({ post }: { post: PostWithAuthor }) {
             
     
             <View style={styles.postHeader }>
-              <Image source={{ uri: post?.author?.profilePicture||""}} style={styles.avatar} />
+              <Image source={{ uri: post?.author?.profilePicture||"https://www.gravatar.com/avatar/?d=mp"}} style={styles.avatar} />
               <View  style={{ flexDirection: 'row', gap: 20, alignItems: 'center' , flex: 0 }}>
                 <Text style={styles.author}>{post?.author?.username} </Text>
                 <Text style={styles.username}>@{post?.author?.username} • <Text style={styles.date}>{formatDate(post?._creationTime||0)}</Text></Text>

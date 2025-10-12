@@ -73,8 +73,10 @@ const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
         originalPostId: postId,
         content: comment,
         repostImage: image || null,
+      }).then(()=>{
+        Alert.alert("Success", "Your repost has been shared!");
       });
-      Alert.alert("Success", "Your repost has been shared!");
+      
       navigation.goBack();
     } catch (e) {
       Alert.alert("Error", "Failed to repost. Try again.");

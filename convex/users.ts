@@ -47,11 +47,10 @@ export const CreateUser = mutation({
                         if(existing){
                                 return {success:false,message:"This Email Already Exisits",status:400};
                         }
-                        const profilePictureUrl = args.profilePicture ? await ctx.storage.getUrl(args.profilePicture) : "";
+                        
                 const user = await ctx.db.insert("users",{
                         ...args,
-                        profilePicture: profilePictureUrl||"",
-                }) 
+                })
                 // await ctx.runMutation(internal.sendEmail.sendEmail,{})
                 return {success:true,message:"Success your Account was successfully created ",status:200,user:user};
         }catch{
@@ -136,25 +135,46 @@ export const GetCustomerByTokenAction = action({
 export const UpdateUser = mutation({
          args:{User:v.object({
                 _id: v.id("users"),
-                username: v.string(),
-                email: v.string(),
-                passwordHash: v.string(),
-                phoneNumber: v.optional(v.string()),
+                username: v.optional(v.string()),
                 profilePicture: v.optional(v.string()),
-                isVerified: v.boolean(),
-                role: v.string(),
+                about: v.optional(v.string()),
+                bannerImage: v.optional(v.string()),
+                email: v.optional(v.string()),
+                passwordHash: v.optional(v.string()),
+                phoneNumber: v.optional(v.string()),
+                isVerified: v.optional(v.boolean()),
+                role: v.optional(v.string()),
                 reset_token: v.optional(v.string()),
-                reset_token_expires:v.number(),
-                updatedAt: v.number(),
+                reset_token_expires: v.optional(v.number()),
+                updatedAt: v.optional(v.number()),
                 lastLogin: v.optional(v.number()),
+                _creationTime: v.optional(v.number()),
+                
          })},handler:async(ctx,args)=>{
-              if(args.User){
+                const existingUser = await ctx.db.get(args.User._id);
+                if(!existingUser){
+                        return {succes:false, status: 404, message: "User not found", user: null};
+                }
+              
+                const profilePictureUrl = args.User.profilePicture
+                  ? (!args.User.profilePicture.startsWith("https")
+                      ? await ctx.storage.getUrl(args.User.profilePicture)
+                      : args.User.profilePicture)
+                  : "";
+                const bannerImageUrl = args.User.bannerImage
+                  ? (!args.User.bannerImage.startsWith("https")
+                      ? await ctx.storage.getUrl(args.User.bannerImage)
+                      : args.User.bannerImage)
+                  : "";
               const NewUser = await ctx.db.patch(args.User._id, {
-                ...args.User,
+                ...existingUser,
+                username: args.User.username || existingUser.username,
+                about: args.User.about || existingUser.about,
+                profilePicture: profilePictureUrl||"",
+                bannerImage: bannerImageUrl||"",
                 updatedAt: Date.now(),
               });
               return {succes:true, status: 20, message: "Success", user: NewUser};
-              }
               
               
         }})

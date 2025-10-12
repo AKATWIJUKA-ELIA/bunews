@@ -107,7 +107,7 @@ export default function SettingsScreen() {
       {/* Account Section */}
       <Text style={styles.sectionTitle}>Account</Text>
 
-      <Link href="/account" asChild>
+      <Link href="/editprofile" asChild>
         <TouchableOpacity style={styles.settingRow}>
           <Ionicons name="person-outline" size={22} color="#007AFF" />
           <Text style={styles.settingLabel}>Edit Profile</Text>

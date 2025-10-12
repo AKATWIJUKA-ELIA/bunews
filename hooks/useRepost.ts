@@ -25,8 +25,17 @@ export function useRepost() {
   const repost = async ({ reposterId, originalPostId,content, repostImage }: RepostPayload) => {
     setLoading(true);
     try {
-      await createRepost({ reposterId,originalPostId, content: content || "", repostImage: repostImage||"" });
-      setLoading(false);
+      await createRepost({ reposterId,originalPostId, content: content || "", repostImage: repostImage||"" }).then((res)=>{
+        if(!res?.success){
+                setLoading(false);
+                return { success: false, message: res?.message||"Failed to create repost", status: res?.status||500 };                
+        }
+        setLoading(false);
+        return { success: true, message: res?.message||"Repost created successfully", status: res?.status||200 };
+        
+      })
+
+      
     } catch (err: any) {
       setLoading(false);
       throw err;

@@ -7,14 +7,33 @@ import { Id } from "@/convex/_generated/dataModel";
 if (!process.env.EXPO_PUBLIC_CONVEX_URL) {
   throw new Error("CONVEX_URL is not defined");
 }
+interface userToUpdate {
+        _id?: Id<"users">,
+        username?: string|"",
+        about?:string,
+        profilePicture?: string,
+        bannerImage?: string,
+        email?: string,
+        passwordHash?: string,
+        phoneNumber?: string,
+        isVerified?: boolean | false,
+        role?: string|"",
+        reset_token?:string
+        reset_token_expires?:number,
+        updatedAt?: number,
+        lastLogin?: number,
+}
 const convex = new ConvexClient(process.env.EXPO_PUBLIC_CONVEX_URL);
 
-export async function UpdateUser(userToUpdate: UpstreamUser | null) {
+export async function UpdateUser(userToUpdate: userToUpdate | null) {
     if (!userToUpdate) {
         return { success: false, message: "No user provided" };
     }
     try {
-        await convex.mutation(api.users.UpdateUser, { User: userToUpdate });
+        if (!userToUpdate._id) {
+            return { success: false, message: "User ID (_id) is required" };
+        }
+        await convex.mutation(api.users.UpdateUser, { User: { ...userToUpdate, _id: userToUpdate._id } });
         return { success: true, message: "User updated successfully" };
     } catch (e) {
         return { success: false, message: e instanceof Error ? e.message : "Unknown error" };
