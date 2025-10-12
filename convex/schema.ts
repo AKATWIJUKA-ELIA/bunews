@@ -31,6 +31,8 @@ export default defineSchema({
     profilePicture: v.optional(v.string()),
     isVerified: v.boolean(),
     role: v.string(),
+    about: v.optional(v.string()),
+    bannerImage: v.optional(v.string()),
     reset_token: v.optional(v.string()),
     reset_token_expires:v.number(),
     updatedAt: v.number(),

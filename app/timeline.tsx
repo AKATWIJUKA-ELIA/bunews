@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image, FlatList, ActivityIndicator, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Image, FlatList, ActivityIndicator, ScrollView,ImageBackground } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { Id } from "@/convex/_generated/dataModel";
 // import your hooks or API functions to fetch user and posts info
@@ -68,7 +68,13 @@ export default function UserTimelineScreen() {
         }}
       />
       {/* User About Section */}
-      <View style={styles.profileSection}>
+      <ImageBackground
+      source={{ uri:user.bannerImage||"https://images.unsplash.com/photo-1503264116251-35a269479413?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" }}
+      style={styles.profileSectionImage}
+      imageStyle={{ borderRadius: 1 }} // optional: round the image corners
+      resizeMode="cover"
+      >
+        <View style={styles.profileSection}>
         <Image
           source={{ uri: user.profilePicture || "https://i.pravatar.cc/150?img=1" }}
           style={styles.avatar}
@@ -76,7 +82,7 @@ export default function UserTimelineScreen() {
         <Text style={styles.name}>{user.Username}</Text>
         <Text style={styles.username}>@{user.Username.toLowerCase()}</Text>
         <Text style={styles.email}>{user.email}</Text>
-        {user.bio ? <Text style={styles.bio}>{user.bio}</Text> : <Text style={styles.bio}>This is my about info and so on</Text>}
+        {user.about ? <Text style={styles.about}>{user.about}</Text> : <Text style={styles.about}>This is my about info and so on</Text>}
         {/* Add followers/following, join date, etc. if needed */}
         <View style={{height:"auto",paddingVertical:10,paddingHorizontal:12,flexDirection:"row",gap:34, position:"absolute",top:30, right:22, zIndex:50, borderRadius:40, backgroundColor:"#9b9abeff", }} >
                    {tabs.map((tab)=>(
@@ -89,6 +95,8 @@ export default function UserTimelineScreen() {
         </View>
       
       </View>
+      </ImageBackground>
+      
      
 
       {/* Timeline Section */}
@@ -115,24 +123,30 @@ const styles = StyleSheet.create({
   loader: {
     flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#fff"
   },
-  profileSection: {
+  profileSectionImage: {
 //     alignItems: "center",
         flexDirection: "column",
         justifyContent: "center",
-    padding: 20,
-    backgroundColor: "#f6f8fa",
+        backgroundImage: '',
+    padding: 2,
+    
     borderBottomWidth: 1,
     borderColor: "#eee",
     marginTop: 30,
   },
+        profileSection: {
+                backgroundColor: "#ffffffff",
+                opacity: 0.7,
+                padding: 16,
+        },
   avatar: {
     width: 90, height: 90, borderRadius: 45, marginBottom: 12,
-    backgroundColor: "#ddd"
+    backgroundColor: "#353535ff"
   },
-  name: { fontSize: 22, fontWeight: "bold", color: "#222" },
-  username: { fontSize: 14, color: "#888", marginTop: 2 },
-  email: { fontSize: 14, color: "#666", marginTop: 4 },
-  bio: { marginTop: 10, fontSize: 15, color: "#444", textAlign: "left", fontStyle: "italic" },
+  name: { fontSize: 22, fontWeight: "bold", color: "#000000ff" },
+  username: { fontSize: 14, color: "#0011ffff", marginTop: 2 },
+  email: { fontSize: 14, color: "#000000ff", marginTop: 4 },
+  about: { marginTop: 10, fontSize: 15, color: "#000000ff", textAlign: "left", fontStyle: "italic" },
   sectionHeader: {
     fontSize: 17, fontWeight: "700", marginVertical: 14, marginLeft: 18
   },
