@@ -12,6 +12,8 @@ import useGetPostComments from '@/hooks/useGetPostComments';
 import { formatDate } from '@/lib/utils';
 import { CommentWithUser } from '@/lib/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTheme } from "../ThemeContext";
+import { lightTheme, darkTheme } from "../../constants/theme";
 
 
 
@@ -23,6 +25,9 @@ export default function PostDetailsScreen() {
   const { commentOnPost, } = useInteractWithPost();
   const { commentsWithAuthors: commentsData, } = useGetPostComments(id);
   const [user, setUser] = useState<any>(null);
+
+   const { theme } = useTheme();
+        const colors = theme === "dark" ? darkTheme : lightTheme;
 
     useEffect(() => {
   (async () => {
@@ -48,14 +53,14 @@ export default function PostDetailsScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: colors.background}]}>
       <Stack.Screen
         options={{
           title: `Post `,
           headerShown: true,
           headerTitleAlign: 'left',
-          headerStyle: { backgroundColor: '#ffffffff' },
-          headerTitleStyle: { fontWeight: '700', fontSize: 18, color: "#000" },
+          headerStyle: { backgroundColor: `${colors.background}` },
+          headerTitleStyle: { fontWeight: '700', fontSize: 18, color: `${colors.text}` },
         }}
       />
       <KeyboardAvoidingView
@@ -73,13 +78,13 @@ export default function PostDetailsScreen() {
           {/* Comments Section */}
           <Text style={styles.commentsHeader}>Comments</Text>
           {commentsData && commentsData.length > 0 ? commentsData.map((comment) => (
-            <View key={comment._id} style={styles.commentItem}>
+            <View key={comment._id} style={[styles.commentItem, {backgroundColor: colors.background}]}>
               <Image source={{ uri: comment.user?.profilePicture||"" }} style={styles.commentAvatar} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.commentUser}>
-                  {comment.user?.username} <Text style={styles.commentUsername}>{comment.user?.username}</Text>
+                <Text style={styles.commentUsername}>{comment.user?.username}</Text>
                 </Text>
-                <Text style={styles.commentText}>{comment.content}</Text>
+                <Text style={[styles.commentText,{color:colors.text}]}>{comment.content}</Text>
                 <Text style={styles.commentTime}>{formatDate(comment._creationTime||0)} ago</Text>
               </View>
             </View>
@@ -99,7 +104,7 @@ export default function PostDetailsScreen() {
             returnKeyType="send"
           />
                 <TouchableOpacity onPress={() => handleComment(comment)} style={styles.SendButton}>
-                        <Text style={{color:'#ffae00ff', fontWeight:'600'}}>Reply</Text>
+                        <Text style={{color:'#00a6ffff', fontWeight:'600'}}>Reply</Text>
                 </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -130,7 +135,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         fontSize: 16,
         borderWidth: 1,
-        borderColor: '#ffc800ff',
+        borderColor: '#00a6ffff',
         paddingHorizontal: 12,
         paddingVertical: 8,
         borderRadius: 20,

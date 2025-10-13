@@ -37,7 +37,19 @@ export default function NewsCard({ post }: { post: PostWithAuthor }) {
             
     
             <View style={styles.postHeader }>
-              <Image source={{ uri: post?.author?.profilePicture||"https://www.gravatar.com/avatar/?d=mp"}} style={styles.avatar} />
+               <Link
+  href={{
+    pathname: "/otherUserTimeLine/[user]",
+    params: { user: JSON.stringify(post?.author) }
+  }}
+  
+>
+  <Image
+    source={{ uri: post?.author?.profilePicture || "https://www.gravatar.com/avatar/?d=mp" }}
+    style={styles.avatar}
+  />
+</Link>
+             
               <View  style={{ flexDirection: 'row', gap: 20, alignItems: 'center' , flex: 0 }}>
                 <Text style={[styles.author,{color:colors.text}]}>{post?.author?.username} </Text>
                 <Text style={[styles.username,{color:colors.icon}]}>@{post?.author?.username} • <Text style={styles.date}>{formatDate(post?._creationTime||0)}</Text></Text>
@@ -57,11 +69,14 @@ export default function NewsCard({ post }: { post: PostWithAuthor }) {
             </View>
     
               <View style={styles.actions}>
-                  
-              <TouchableOpacity style={styles.action}>
+                  <Link href={`/post/${post?._id}`} asChild>
+                  <TouchableOpacity style={styles.action}>
                 <Ionicons name="chatbubble-outline" size={20} color="#0077ffff" />
                 <Text style={[styles.count,{color:colors.text}]}>{comments?.length}</Text>
               </TouchableOpacity>
+                  </Link>
+              
+
               <TouchableOpacity style={styles.action} onPress={()=>{navigation.navigate("repostScreen", { post })}}>
                 <Ionicons name="repeat-outline" size={20} color="#555" />
                 <Text style={[styles.count,{color:colors.text}]}>5</Text>

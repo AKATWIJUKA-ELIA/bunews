@@ -156,7 +156,7 @@ export default function CreatePostScreen() {
             style={styles.avatar}
           />
           <TextInput
-            style={styles.input}
+            style={[styles.input, {color: colors.text}]}
             placeholder="What's happening?"
             placeholderTextColor="#888"
             multiline

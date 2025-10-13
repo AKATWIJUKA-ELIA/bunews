@@ -1,17 +1,17 @@
+import { useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image, FlatList, ActivityIndicator, ScrollView,ImageBackground } from "react-native";
-import { useRoute } from "@react-navigation/native";
 import { Id } from "@/convex/_generated/dataModel";
 // import your hooks or API functions to fetch user and posts info
 import useGetUserById from "@/hooks/useGetUserById";
 import useGetPostsByAuthor from "@/hooks/useGetPostsByAuthor";
 import { PostWithAuthor, User } from "@/lib/types";
 import NewsCard from "@/components/Feed/NewsCard/NewsCard";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useLocalSearchParams } from "expo-router";
 import { Link, Stack } from "expo-router";
 import { Ionicons } from '@expo/vector-icons'; 
-import { useTheme } from "./ThemeContext";
-import { lightTheme, darkTheme } from "../constants/theme";
+import { useTheme } from "../ThemeContext";
+import { lightTheme, darkTheme } from "../../constants/theme";
 const tabs: {
   title: string;
   name: string;
@@ -22,23 +22,13 @@ const tabs: {
   { title: 'Account', name: 'account', icon: { name: 'person', size: 28 } },
 ];
 
-export default function UserTimelineScreen() {
+export default function OtherUserTimelineScreen() {
            const { theme } = useTheme();
           const colors = theme === "dark" ? darkTheme : lightTheme;
-           const [user, setUser] = useState<any>(null);
-  // Fetch user info and posts (custom hooks or your API logic)
-          useEffect(() => {
-                (async () => {
-                const userString = await AsyncStorage.getItem("user");
-                console.log("userString", userString);
-                if (userString) {
-                const user = JSON.parse(userString);
-                setUser(user);
-                }
-                })();
-}, []);
-  const { postWithAuthor:posts, loading: loadingPosts } = useGetPostsByAuthor(user?.User_id as Id<"users">);
+        const params = useLocalSearchParams();
+        const user = params.user ? JSON.parse(params.user as string) : null;
  
+        const { postWithAuthor:posts, loading: loadingPosts } = useGetPostsByAuthor(user?._id as Id<"users">);
 
   if ( loadingPosts) {
     return (
@@ -72,7 +62,7 @@ export default function UserTimelineScreen() {
       />
       {/* User About Section */}
       <ImageBackground
-      source={{ uri:user.bannerImage||"https://images.unsplash.com/photo-1503264116251-35a269479413?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" }}
+      source={{ uri:user.bannerImage ||"https://images.unsplash.com/photo-1503264116251-35a269479413?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" }}
       style={styles.profileSectionImage}
       imageStyle={{ borderRadius: 1 }} // optional: round the image corners
       resizeMode="cover"
@@ -82,8 +72,8 @@ export default function UserTimelineScreen() {
           source={{ uri: user.profilePicture || "https://i.pravatar.cc/150?img=1" }}
           style={styles.avatar}
         />
-        <Text style={styles.name}>{user.Username}</Text>
-        <Text style={styles.username}>@{user.Username.toLowerCase()}</Text>
+        <Text style={styles.name}>{user.username}</Text>
+        <Text style={styles.username}>@{user.username.toLowerCase()}</Text>
         <Text style={styles.email}>{user.email}</Text>
         {user.about ? <Text style={styles.about}>{user.about}</Text> : <Text style={styles.about}>This is my about info and so on</Text>}
         {/* Add followers/following, join date, etc. if needed */}
@@ -103,13 +93,13 @@ export default function UserTimelineScreen() {
      
 
       {/* Timeline Section */}
-      <Text style={[styles.sectionHeader,{color:colors.text}]}>Posts by You</Text>
+      <Text style={[styles.sectionHeader,{color:colors.text}]}>Posts by {user.username}</Text>
       {posts?.length === 0 ? (
-        <Text style={[styles.noPosts,{color:colors.text}]}>No posts yet. Your Posts will Appear Here</Text>
+        <Text style={styles.noPosts}>No posts yet. Your Posts will Appear Here</Text>
       ) : (
         <FlatList
           data={posts}
-          keyExtractor={item => item._id}
+          keyExtractor={item => item?._id}
           renderItem={({ item }) => 
           <NewsCard post={item as PostWithAuthor} />}
           contentContainerStyle={{ paddingBottom: 40 }}
