@@ -14,6 +14,7 @@ import useGetAllPosts from '@/hooks/useGetAllPosts';
 import { formatDate } from '@/lib/utils';
 import Loader from '@/components/Loader/loader';
 import { Link, router } from 'expo-router';
+import { ScrollView } from 'react-native';
   const categories = [
     'Politics',
     'Technology',
@@ -71,9 +72,11 @@ export default function SearchScreen() {
     
 
       {/* 📜 Search Results */}
-      {searchResults && searchResults?.length > 0 ? (
+     
         
-        searchResults.map((item) => (
+       <ScrollView>
+         {searchResults && searchResults?.length > 0 ? (
+         searchResults.map((item) => (
                         <TouchableOpacity key={item._id} style={[styles.resultCard,]}  onPress={() => router.push(`/post/${item._id}`)}>
               <Image source={{ uri: item.postImage||"" }} style={styles.resultImage} />
               <View style={{ flex: 1 }}>
@@ -85,7 +88,9 @@ export default function SearchScreen() {
             </TouchableOpacity>
                 
         ))
-      ):(
+        ):
+     
+      (
         
         <>
         
@@ -110,6 +115,7 @@ export default function SearchScreen() {
           ))}
         </>
       )}
+        </ScrollView>
     </View>
   );
 }

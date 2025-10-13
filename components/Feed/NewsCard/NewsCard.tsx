@@ -87,7 +87,7 @@ export default function NewsCard({ post }: { post: PostWithAuthor }) {
     
     
                 <TouchableOpacity style={styles.action} onPress={()=>handleLike()}>
-                <FontAwesome name="heart" size={20} color="#ff0000ff" />
+                <FontAwesome name="heart" size={20} color="#f52020ff" />
                 <Text style={[styles.count,{color:colors.text}]}>{post?.likes}</Text>
               </TouchableOpacity>
     

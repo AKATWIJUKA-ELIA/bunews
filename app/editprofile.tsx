@@ -12,7 +12,7 @@ import { useTheme } from "./ThemeContext";
 import { lightTheme, darkTheme } from "../constants/theme";
 
 // Default image URLs
-const DEFAULT_AVATAR = "https://i.pravatar.cc/150?img=1";
+const DEFAULT_AVATAR = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
 const DEFAULT_BANNER = "https://tangible-jaguar-208.convex.cloud/api/storage/359ce195-fa40-4bfe-afe2-6be4aebd9559";
 
 

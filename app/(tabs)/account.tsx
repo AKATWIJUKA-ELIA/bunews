@@ -73,7 +73,7 @@ export default function SettingsScreen() {
       />
       {/* Profile Section */}
       <View style={styles.profileSection}>
-        <Image source={{ uri: user.profilePicture||"" }} alt={user.profilePicture} style={styles.avatar} />
+        <Image source={{ uri: user.profilePicture||"https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" }} alt={user.profilePicture} style={styles.avatar} />
         <View>
           <Text style={styles.name}>{user?.Username}</Text>
           <Text style={styles.email}>{user.email}</Text>

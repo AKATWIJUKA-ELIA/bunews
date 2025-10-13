@@ -83,7 +83,7 @@ export default function UserTimelineScreen() {
       >
         <View style={styles.profileSection}>
         <Image
-          source={{ uri: user.profilePicture || "https://i.pravatar.cc/150?img=1" }}
+          source={{ uri: user.profilePicture || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" }}
           style={styles.avatar}
         />
         <Text style={styles.name}>{user.Username}</Text>

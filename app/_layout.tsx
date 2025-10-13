@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { ConvexProvider, ConvexReactClient } from "convex/react";
-
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ThemeProvider } from "./ThemeContext";
 
 
@@ -17,12 +17,14 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider>
-        <StatusBar
+       <GestureHandlerRootView>
+        <ConvexProvider client={convex}>
+         <StatusBar
           style="auto" // or "light"
         //  backgroundColor="#000000ff" // match your header color
           translucent={false}
         />
-        <ConvexProvider client={convex}>
+        
       <Stack>        
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
@@ -32,6 +34,7 @@ export default function RootLayout() {
       </Stack>
       {/* <StatusBar style="auto" /> */}
       </ConvexProvider>
+       </GestureHandlerRootView>
     </ThemeProvider>
   );
 }

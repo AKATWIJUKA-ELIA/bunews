@@ -39,7 +39,7 @@ const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
     }
   })();
 }, []);
-
+ 
   // Pick image from gallery
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
