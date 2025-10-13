@@ -1,10 +1,11 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+// import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { ConvexProvider, ConvexReactClient } from "convex/react";
-import Header from '@/components/Header/Header';
+
+import { ThemeProvider } from "./ThemeContext";
 
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
@@ -15,10 +16,10 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider>
         <StatusBar
-          style="dark" // or "light"
-          backgroundColor="#ffff" // match your header color
+          style="auto" // or "light"
+        //  backgroundColor="#000000ff" // match your header color
           translucent={false}
         />
         <ConvexProvider client={convex}>
@@ -26,8 +27,8 @@ export default function RootLayout() {
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="timeline" options={{ title: "User Timeline" }}
-/>
+        <Stack.Screen name="timeline" options={{ title: "User Timeline" }}/>
+        <Stack.Screen name="otherUserTimeLine" options={{ title: "User Timeline" }}/>
       </Stack>
       {/* <StatusBar style="auto" /> */}
       </ConvexProvider>

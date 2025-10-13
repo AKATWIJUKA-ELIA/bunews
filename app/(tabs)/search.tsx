@@ -4,48 +4,52 @@ import {
   Text,
   StyleSheet,
   TextInput,
-  FlatList,
   TouchableOpacity,
   Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
+import { useTheme } from "../ThemeContext";
+import { lightTheme, darkTheme } from "../../constants/theme";
+import useGetAllPosts from '@/hooks/useGetAllPosts';
+import { formatDate } from '@/lib/utils';
+import Loader from '@/components/Loader/loader';
+import { Link, router } from 'expo-router';
+  const categories = [
+    'Politics',
+    'Technology',
+    'Business',
+    'Culture',
+    'Science',
+    'Sports',
+  ]
 export default function SearchScreen() {
   const [query, setQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<typeof mockNews>([]);
+ 
+   const { theme } = useTheme();
+        const colors = theme === "dark" ? darkTheme : lightTheme;
+        const { JustPosts, loading } = useGetAllPosts();
+        const trendingPosts = JustPosts?.filter((post)=>(post.likes>2)).slice(0,5);
+         const [searchResults, setSearchResults] = useState<typeof JustPosts>([]);
 
-  // Mock trending topics and search data
-  const trendingTopics = [
-    { id: '1', topic: '#UgandaElections2025', tweets: '32.4K' },
-    { id: '2', topic: '#TechInAfrica', tweets: '12.1K' },
-    { id: '3', topic: '#ClimateChange', tweets: '8.7K' },
-  ];
+        const NumberofTrending=(category:string)=>{
+                return JustPosts?.filter((post)=>(post.category===category)).length;
+        }
 
-  const mockNews = [
-    {
-      id: '1',
-      title:
-        'Uganda tightens security ahead of the 2025/26 Presidential Elections.',
-      source: 'Daily Monitor',
-      image: 'https://picsum.photos/200/120',
-    },
-    {
-      id: '2',
-      title: 'AI transforming journalism and real-time news verification.',
-      source: 'TechDigest',
-      image: 'https://picsum.photos/200/140',
-    },
-  ];
+
 
   const handleSearch = (text: string) => {
     setQuery(text);
     // You can replace this with API logic later
-    if (text.length > 0) setSearchResults(mockNews);
+    if (text.length > 0) setSearchResults(JustPosts?.filter((item) => item.category.toLowerCase().includes(text.toLowerCase())) || []);
     else setSearchResults([]);
+   
   };
+  if (loading) {
+        return <Loader/>;
+  }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: colors.background}]}>
 
       {/* 🔍 Search Bar */}
       <View style={styles.searchContainer}>
@@ -64,38 +68,47 @@ export default function SearchScreen() {
         )}
       </View>
 
-      {/* 🧭 Trending Topics */}
-      {query.length === 0 && (
-        <>
-          <Text style={styles.sectionTitle}>Trending</Text>
-          {trendingTopics.map((item) => (
-            <TouchableOpacity key={item.id} style={styles.trendingItem}>
-              <View>
-                <Text style={styles.topic}>{item.topic}</Text>
-                <Text style={styles.tweets}>{item.tweets} posts</Text>
+    
+
+      {/* 📜 Search Results */}
+      {searchResults && searchResults?.length > 0 ? (
+        
+        searchResults.map((item) => (
+                        <TouchableOpacity key={item._id} style={[styles.resultCard,]}  onPress={() => router.push(`/post/${item._id}`)}>
+              <Image source={{ uri: item.postImage||"" }} style={styles.resultImage} />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.resultTitle}>{item.category}</Text>
+                <Text style={styles.resultSource}>{item.content}</Text>
+                <Text>{formatDate(item._creationTime)}</Text>
               </View>
-              <Ionicons name="ellipsis-horizontal" size={18} color="#999" />
+              
+            </TouchableOpacity>
+                
+        ))
+      ):(
+        
+        <>
+        
+          <Text style={[styles.sectionTitle,{color:colors.text}]}>Trending</Text>
+          {trendingPosts?.map((item) => (
+            <TouchableOpacity key={item._id} style={styles.trendingItem} onPress={() => {handleSearch(item.category)}}>
+              <View  >
+                <Text style={[styles.topic,{color:colors.text}]}>{item.category}</Text>
+                <Text style={styles.tweets}>{NumberofTrending(item.category)} posts</Text>
+              </View>
+              {/* <Ionicons name="ellipsis-horizontal" size={18} color="#999" /> */}
+            </TouchableOpacity>
+          ))}
+          <Text style={[styles.sectionTitle,{color:colors.text}]}>More Categories</Text>
+          {categories?.map((item,index) => (
+            <TouchableOpacity key={index} style={[styles.trendingItem,{borderBottomWidth: 0,}]} onPress={() => {handleSearch(item)}}>
+              <View  >
+                <Text style={[styles.topic,{color:colors.text}]}>{item}</Text>
+              </View>
+              {/* <Ionicons name="ellipsis-horizontal" size={18} color="#999" /> */}
             </TouchableOpacity>
           ))}
         </>
-      )}
-
-      {/* 📜 Search Results */}
-      {query.length > 0 && (
-        <FlatList
-          data={searchResults}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={{ paddingVertical: 10 }}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.resultCard}>
-              <Image source={{ uri: item.image }} style={styles.resultImage} />
-              <View style={{ flex: 1 }}>
-                <Text style={styles.resultTitle}>{item.title}</Text>
-                <Text style={styles.resultSource}>{item.source}</Text>
-              </View>
-            </TouchableOpacity>
-          )}
-        />
       )}
     </View>
   );
@@ -152,9 +165,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     backgroundColor: '#fff',
-    paddingVertical: 10,
-    borderBottomWidth: 0.5,
-    borderColor: '#eee',
+    padding: 6,
+    borderRadius: 8,
+        marginVertical: 6,
+    borderWidth: 2,
+    borderColor: '#0055ffff',
   },
   resultImage: {
     width: 80,

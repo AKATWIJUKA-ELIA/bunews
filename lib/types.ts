@@ -29,6 +29,7 @@ export interface User {
         isVerified: boolean | false,
         role: string|"",
         about?:string,
+        bannerImage?:string,
         reset_token?:string
         reset_token_expires:number,
         updatedAt: number,

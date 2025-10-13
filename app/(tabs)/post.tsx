@@ -21,12 +21,17 @@ import { uploadImage } from '@/lib/utils';
 import { fetch } from 'expo/fetch';
 import { File } from 'expo-file-system';
 import { router } from 'expo-router';
+import { useTheme } from "../ThemeContext";
+import { lightTheme, darkTheme } from "../../constants/theme";
 
 
 export default function CreatePostScreen() {
   const [content, setContent] = useState('');
   const [selectedImage, setSelectedImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
   const [category, setCategory] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+   const { theme } = useTheme();
+          const colors = theme === "dark" ? darkTheme : lightTheme;
 //   const user = AsyncStorage.getItem('user');
         const [user, setUser] = useState<any>(null);
     const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
@@ -69,14 +74,17 @@ export default function CreatePostScreen() {
 
 
   const handlePost = async () => {
+        setSubmitting(true);
         let imageUrl = "";
     if (!content.trim()) {
       Alert.alert('Empty Post', 'Please write something before posting.');
+        setSubmitting(false);
       return;
     }
     await uploadImage(selectedImage?.uri||"").then(async (imagefile)=>{
         if(!imagefile){
                 Alert.alert("Error", "Image conversion failed, please try again");
+                        setSubmitting(false);
                 return;
         }
         const postUrl = await generateUploadUrl();
@@ -109,29 +117,33 @@ export default function CreatePostScreen() {
   }).then((res)=>{
         if(!res.success){
                 Alert.alert("Error", res.message || "Post creation failed");
+                setSubmitting(false);
                 return;
         }
         Alert.alert("Success", "Post created successfully");
+        setSubmitting(false);
         setContent('');
         setSelectedImage(null);
         setCategory(null);
   });
-
-    Alert.alert('Success', 'Your news update has been posted!');
-    setContent('');
-    setSelectedImage(null);
-    setCategory(null);
+        router.replace("/");
   };
 
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container,{backgroundColor: colors.background}]}>
       {/* 🧭 Top Bar */}
+      {submitting && (
+        <View style={styles.overlay}>
+        <Text style={styles.overlayText}>Posting...</Text>
+    </View>
+      )}
       <View style={styles.header}>
         <TouchableOpacity>
           <Ionicons name="close" size={26} color="#000" onPress={()=>router.replace("/")} />
         </TouchableOpacity>
-        <Text style={styles.title}>Create Post</Text>
-        <TouchableOpacity onPress={handlePost}>
+        <Text style={[styles.title,{color:colors.text}]}>Create Post</Text>
+        <TouchableOpacity onPress={handlePost} disabled={submitting}>
           <Text style={styles.postButton}>Post</Text>
         </TouchableOpacity>
       </View>
@@ -144,7 +156,7 @@ export default function CreatePostScreen() {
             style={styles.avatar}
           />
           <TextInput
-            style={styles.input}
+            style={[styles.input, {color: colors.text}]}
             placeholder="What's happening?"
             placeholderTextColor="#888"
             multiline
@@ -197,6 +209,20 @@ export default function CreatePostScreen() {
 }
 
 const styles = StyleSheet.create({
+         overlay: {
+    position: "absolute",
+    top: 35, left: 0, right: 0,
+    padding: 10,
+    backgroundColor: "rgba(219, 219, 255, 0.9)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 100, // High zIndex to overlay other content
+  },
+  overlayText: {
+    fontSize: 18,
+    color: "#001effff",
+    fontWeight: "bold",
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',

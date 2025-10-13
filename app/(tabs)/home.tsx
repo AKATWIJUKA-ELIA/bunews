@@ -4,9 +4,13 @@ import FeedList from "@/components/Feed/FeedList";
 import Header from "@/components/Header/Header";
 import useGetAllPosts from '@/hooks/useGetAllPosts';
 import Loader from '@/components/Loader/loader'
+import { useTheme } from "../ThemeContext";
+import { lightTheme, darkTheme } from "../../constants/theme";
 
 export default function NewsFeedScreen() {
 
+        const { theme } = useTheme();
+        const colors = theme === "dark" ? darkTheme : lightTheme;
         const { postsWithAuthors: posts, loading } = useGetAllPosts();
         // const newsPosts = posts?.filter(post => post !== undefined);
         const scrollY = useRef(new Animated.Value(0)).current;
@@ -27,7 +31,7 @@ export default function NewsFeedScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-         <Animated.View style={[styles.header, { transform: [{ translateY: headerTranslateY }] }]}>
+         <Animated.View style={[styles.header, { transform: [{ translateY: headerTranslateY }],backgroundColor: colors.background }]}>
                 <Header />
          </Animated.View>
 

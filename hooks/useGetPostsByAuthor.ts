@@ -38,7 +38,7 @@ const useGetPostsByAuthor = (id: Id<"users">) => {
         ...post,
         author: author
     })) || [];
-    console.log("postsWithAuthor", postsWithAuthor);
+//     console.log("postsWithAuthor", postsWithAuthor);
     
 
     return {

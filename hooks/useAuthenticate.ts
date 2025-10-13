@@ -62,22 +62,6 @@ const useAuthenticate = () => {
                                 bannerImage:user?.bannerImage||"",
                         }
                         await saveUser.saveUser(usertosave)
-                          if (user?._id) {
-                                                        UpdateUser({
-                                                                username: user.username,
-                                                                email: user.email,
-                                                                passwordHash: user.passwordHash,
-                                                                phoneNumber: user.phoneNumber,
-                                                                profilePicture: user.profilePicture||null||undefined,
-                                                                isVerified: user.isVerified,
-                                                                role: user.role,
-                                                                _id: user._id as Id<"users">,
-                                                                lastLogin: Date.now(),
-                                                                reset_token_expires: user.reset_token_expires ?? 0,
-                                                                updatedAt: Date.now(),
-                                                                
-                                                        });
-                                                }
                         return { success: true, status: 201, message: 'Success' };
                 } catch  {
                         console.error('Error during session creation:');

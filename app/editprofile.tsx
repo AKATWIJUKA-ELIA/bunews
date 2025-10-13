@@ -8,6 +8,8 @@ import { uploadImage } from "@/lib/utils";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { UpdateUser } from "@/lib/convex";
+import { useTheme } from "./ThemeContext";
+import { lightTheme, darkTheme } from "../constants/theme";
 
 // Default image URLs
 const DEFAULT_AVATAR = "https://i.pravatar.cc/150?img=1";
@@ -17,7 +19,8 @@ const DEFAULT_BANNER = "https://tangible-jaguar-208.convex.cloud/api/storage/359
 export default function EditProfileScreen() {
   // User state
     const [user, setUser] = useState<any>(null);
-  
+    const { theme } = useTheme();
+        const colors = theme === "dark" ? darkTheme : lightTheme;
 
   const [loading, setLoading] = useState(false);
   const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
@@ -134,7 +137,7 @@ const [username, setUsername] = useState(user?.Username || "");
                 return <Loader />;
         }
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
+    <ScrollView style={[styles.container,{backgroundColor:colors.background}]} contentContainerStyle={{ paddingBottom: 40 }}>
         <Stack.Screen
         options={{
           title: `Account `, // dynamic title
