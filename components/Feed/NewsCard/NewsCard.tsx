@@ -11,6 +11,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from "../../../app/ThemeContext";
 import { lightTheme, darkTheme } from "../../../constants/theme";
+import useGetAllReposts from '@/hooks/useGetAllReposts';
 
 type RootStackParamList = {
   repostScreen: { post: PostWithAuthor };
@@ -30,6 +31,8 @@ export default function NewsCard({ post }: { post: PostWithAuthor }) {
                 }).catch((err)=>{console.log(err)});
         }
           const { data:comments} = useGetPostComments(post?._id as Id<"posts">);
+        const { data:reposts } = useGetAllReposts();
+        const repostsCount = reposts?.filter(r => r.originalPostId === post?._id).length || 0;
 
   return (
           <View style={[styles.postContainer, { backgroundColor: colors.background,borderColor: colors.borderColor }]}>
@@ -79,7 +82,7 @@ export default function NewsCard({ post }: { post: PostWithAuthor }) {
 
               <TouchableOpacity style={styles.action} onPress={()=>{navigation.navigate("repostScreen", { post })}}>
                 <Ionicons name="repeat-outline" size={20} color="#555" />
-                <Text style={[styles.count,{color:colors.text}]}>5</Text>
+                <Text style={[styles.count,{color:colors.text}]}>{repostsCount}</Text>
               </TouchableOpacity>
     
     
