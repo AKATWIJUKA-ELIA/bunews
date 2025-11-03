@@ -20,9 +20,9 @@ export default function RootLayout() {
        <GestureHandlerRootView>
         <ConvexProvider client={convex}>
          <StatusBar
-          style="auto" // or "light"
-        //  backgroundColor="#000000ff" // match your header color
-          translucent={false}
+          style="auto" //or "light"
+         backgroundColor="#000000ff" // match your header color
+          translucent={true}
         />
         
       <Stack>        

@@ -23,7 +23,7 @@ import { File } from 'expo-file-system';
 import { router } from 'expo-router';
 import { useTheme } from "../ThemeContext";
 import { lightTheme, darkTheme } from "../../constants/theme";
-
+import  * as Haptics from 'expo-haptics';
 
 export default function CreatePostScreen() {
   const [content, setContent] = useState('');
@@ -120,6 +120,7 @@ export default function CreatePostScreen() {
                 setSubmitting(false);
                 return;
         }
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         Alert.alert("Success", "Post created successfully");
         setSubmitting(false);
         setContent('');

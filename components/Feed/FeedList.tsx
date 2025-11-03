@@ -16,7 +16,7 @@ export default function FeedList({ item }: FeedListProps) {
   return (
         <View style={{backgroundColor:colors.background}}>
                 <NewsCard post={item} />
-                <View style={[styles.separator,{backgroundColor:colors.background}]} />
+                <View style={[styles.separator,]} />
         </View>
 
   );
@@ -24,8 +24,9 @@ export default function FeedList({ item }: FeedListProps) {
 
 const styles = StyleSheet.create({
   separator: {
-    height:10,
-    backgroundColor: '#f4f4f4',
+    height:0,
+    borderTopWidth: 0.2,
+    borderTopColor: '#bdbdbdff',
   },
   post:{
         flex: 1,
