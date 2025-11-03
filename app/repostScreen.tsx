@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Alert, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useRoute, useNavigation } from "@react-navigation/native";
@@ -10,6 +10,9 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { uploadImage } from "@/lib/utils";
+import { useTheme } from "./ThemeContext";
+import { lightTheme, darkTheme } from "../constants/theme";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 export default function RepostScreen() {
@@ -22,7 +25,21 @@ const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
   const [image, setImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
         const { repost } = useRepost();
+           const { theme } = useTheme();
+          const colors = theme === "dark" ? darkTheme : lightTheme;
+          const [user, setUser] = useState<any>(null);
 
+            useEffect(() => {
+  (async () => {
+    const userString = await AsyncStorage.getItem("user");
+    console.log("userString", userString);
+    if (userString) {
+      const user = JSON.parse(userString);
+      setUser(user);
+    }
+  })();
+}, []);
+ 
   // Pick image from gallery
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -69,24 +86,30 @@ const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
             });
     try {
       await repost({
-        reposterId: "current-user-id" as Id<"users">, // Replace with actual current user ID
+        reposterId: user.User_id as Id<"users">, // Replace with actual current user ID
         originalPostId: postId,
         content: comment,
-        repostImage: image || null,
-      }).then(()=>{
-        Alert.alert("Success", "Your repost has been shared!");
+        repostImage: imageUrl || null,
       });
-      
+
+        Alert.alert("Success", "Your repost has been shared!");
       navigation.goBack();
     } catch (e) {
       Alert.alert("Error", "Failed to repost. Try again.");
     } finally {
       setLoading(false);
+        setComment("");
+        setImage(null);
     }
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{paddingBottom: 30}}>
+        <KeyboardAvoidingView
+              style={{ flex: 1 }}
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              keyboardVerticalOffset={40} // adjust if needed for your header
+            >
+    <ScrollView style={[styles.container,{backgroundColor:colors.background}]} contentContainerStyle={{paddingBottom: 60}}>
         <Stack.Screen
         options={{
                 headerShown: false,
@@ -99,12 +122,8 @@ const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
            },
         }}
       />
-       <KeyboardAvoidingView
-              style={{ flex: 1 }}
-              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-              keyboardVerticalOffset={80} // adjust if needed for your header
-            >
-      <Text style={styles.header}>Repost</Text>
+       
+      <Text style={[styles.header,{color:colors.text}]}>Repost</Text>
       <Text style={styles.subheader}>You are reposting:</Text>
       <NewsCard post={post} />
       <Text style={styles.label}>Add a comment (optional):</Text>
@@ -132,8 +151,9 @@ const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
           <Text style={styles.repostBtnText}>{loading ? "Posting..." : "Repost"}</Text>
         </TouchableOpacity>
       </View>
-      </KeyboardAvoidingView>
+      
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 

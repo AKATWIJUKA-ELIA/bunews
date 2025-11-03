@@ -40,6 +40,11 @@ export const CreatePost = mutation({
                                         postImage: post.postImage ? await ctx.storage.getUrl(post.postImage) : "",
                                 }
                         }))
+                        // Randomize order (Fisher–Yates shuffle)
+                        // for (let i = postsWithUrls.length - 1; i > 0; i--) {
+                        //         const j = Math.floor(Math.random() * (i + 1));
+                        //         [postsWithUrls[i], postsWithUrls[j]] = [postsWithUrls[j], postsWithUrls[i]];
+                        // }
                         return postsWithUrls;
                 }
         })

@@ -11,6 +11,8 @@ import { FontAwesome } from '@expo/vector-icons';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from "../../../app/ThemeContext";
 import { lightTheme, darkTheme } from "../../../constants/theme";
+import useGetAllReposts from '@/hooks/useGetAllReposts';
+import  * as Haptics from 'expo-haptics';
 
 type RootStackParamList = {
   repostScreen: { post: PostWithAuthor };
@@ -27,12 +29,15 @@ export default function NewsCard({ post }: { post: PostWithAuthor }) {
 
                 await likePost(post?._id as Id<"posts">, post?.author?._id!).then((res)=>{
                         console.log("Like response:", res);
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                 }).catch((err)=>{console.log(err)});
         }
           const { data:comments} = useGetPostComments(post?._id as Id<"posts">);
+        const { data:reposts } = useGetAllReposts();
+        const repostsCount = reposts?.filter(r => r.originalPostId === post?._id).length || 0;
 
   return (
-          <View style={[styles.postContainer, { backgroundColor: colors.background,borderColor: colors.borderColor }]}>
+          <View style={[styles.postContainer, { backgroundColor: colors.background, }]}>
     
             
     
@@ -48,7 +53,7 @@ export default function NewsCard({ post }: { post: PostWithAuthor }) {
     source={{ uri: post?.author?.profilePicture || "https://www.gravatar.com/avatar/?d=mp" }}
     style={styles.avatar}
   />
-</Link>
+                </Link>
              
               <View  style={{ flexDirection: 'row', gap: 20, alignItems: 'center' , flex: 0 }}>
                 <Text style={[styles.author,{color:colors.text}]}>{post?.author?.username} </Text>
@@ -79,12 +84,12 @@ export default function NewsCard({ post }: { post: PostWithAuthor }) {
 
               <TouchableOpacity style={styles.action} onPress={()=>{navigation.navigate("repostScreen", { post })}}>
                 <Ionicons name="repeat-outline" size={20} color="#555" />
-                <Text style={[styles.count,{color:colors.text}]}>5</Text>
+                <Text style={[styles.count,{color:colors.text}]}>{repostsCount}</Text>
               </TouchableOpacity>
     
     
                 <TouchableOpacity style={styles.action} onPress={()=>handleLike()}>
-                <FontAwesome name="heart" size={20} color="#ff0000ff" />
+                <FontAwesome name="heart" size={20} color="#f52020ff" />
                 <Text style={[styles.count,{color:colors.text}]}>{post?.likes}</Text>
               </TouchableOpacity>
     
@@ -117,22 +122,19 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   postContainer: {
-    padding: 16,
+    padding: 6,
     paddingLeft: 10,
     borderRadius: 10,
-    borderWidth: 0.9,
-    borderLeftWidth: 0.9,
-    borderColor: '#2200ffff',
-    marginVertical: 6,
+//     marginVertical: 2,
   },
   contentwithImage:{
         marginTop: -10,
-paddingLeft: 30,
+paddingLeft: 50,
   },
   postHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
+    alignItems: 'flex-start',
+    marginBottom: 2,
     gap: 10,
   },
   avatar: {
@@ -161,7 +163,8 @@ paddingLeft: 30,
   },
   content: {
     fontSize: 15,
-    marginVertical: 6,
+    fontWeight: '400',
+//     marginVertical: 1,
   },
   image: {
     width: '100%',

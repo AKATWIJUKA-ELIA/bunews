@@ -22,6 +22,7 @@ export default function TabLayout() {
   const colors = theme === "dark" ? darkTheme : lightTheme;
   return (
     <Tabs
+    
       screenOptions={{
         headerShown: false,
                 tabBarStyle: {  backgroundColor:colors.background , borderTopColor: 'transparent' },
@@ -29,20 +30,25 @@ export default function TabLayout() {
         tabBarActiveBackgroundColor:"'#6d6c8aff',",
         tabBarActiveTintColor: '#007AFF',
         headerTintColor: '#e9e9e9ff',
+        tabBarPosition: 'bottom',
+        tabBarVariant: 'uikit',
+        animation:"shift",
+        
+        
         
         // 👇 Customize the header bar
-    headerStyle: {
-      backgroundColor: 'rgba(125, 25, 25, 1)',
+//     headerStyle: {
+//       backgroundColor: 'rgba(125, 25, 25, 1)',
 //       backdropFilter: 'blur(10px)',
 //       backgroundBlendMode:"multiply" ,
-      opacity: 0.1,
-      height: 35, // 🔥 This sets the header height
-    },
-    headerTitleStyle: {
-      fontSize: 20, // Text size
-      fontWeight: '700',
-    },
-    headerTitleAlign: 'left',
+//       opacity: 0.1,
+//       height: 3, 
+//     },
+//     headerTitleStyle: {
+//       fontSize: 20, 
+//       fontWeight: '700',
+//     },
+//     headerTitleAlign: 'left',
       }}>
         <Stack.Screen
         options={{
@@ -56,6 +62,7 @@ export default function TabLayout() {
                 <Tabs.Screen
         name={tab.name}
         options={{
+                // tabBarShowLabel: {focused:true},
           title: tab.title,
           tabBarIcon: ({ size }) => (
             <Ionicons name={tab.icon.name} size={size} color={colors.icon} />

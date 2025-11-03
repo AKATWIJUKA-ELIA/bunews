@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image, FlatList, ActivityIndicator, ScrollView,ImageBackground, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Image, FlatList, ActivityIndicator, ScrollView,ImageBackground } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { Id } from "@/convex/_generated/dataModel";
 // import your hooks or API functions to fetch user and posts info
@@ -10,11 +10,6 @@ import NewsCard from "@/components/Feed/NewsCard/NewsCard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Link, Stack } from "expo-router";
 import { Ionicons } from '@expo/vector-icons'; 
-import { useTheme } from "./ThemeContext";
-import { lightTheme, darkTheme } from "../constants/theme";
-import RepostCard from "@/components/RepostCard/RepostCard";
-import useGetRepostsByUser from "@/hooks/useGetRepostsByUser";
-
 const tabs: {
   title: string;
   name: string;
@@ -25,9 +20,8 @@ const tabs: {
   { title: 'Account', name: 'account', icon: { name: 'person', size: 28 } },
 ];
 
-export default function UserTimelineScreen() {
-           const { theme } = useTheme();
-          const colors = theme === "dark" ? darkTheme : lightTheme;
+export default function OtherUserTimelineScreen() {
+
            const [user, setUser] = useState<any>(null);
   // Fetch user info and posts (custom hooks or your API logic)
           useEffect(() => {
@@ -41,8 +35,7 @@ export default function UserTimelineScreen() {
                 })();
 }, []);
   const { postWithAuthor:posts, loading: loadingPosts } = useGetPostsByAuthor(user?.User_id as Id<"users">);
-        const { data:reposts, loading: loadingReposts } = useGetRepostsByUser(user?.User_id as Id<"users">);
- const [activeTab, setActiveTab] = useState<"posts" | "reposts">("posts");
+ 
 
   if ( loadingPosts) {
     return (
@@ -61,7 +54,7 @@ export default function UserTimelineScreen() {
   }
 
   return (
-    <ScrollView style={[styles.container, {backgroundColor: colors.background}]}>
+    <ScrollView style={styles.container}>
         <Stack.Screen
         options={{
           title: `Account `, // dynamic title
@@ -83,7 +76,7 @@ export default function UserTimelineScreen() {
       >
         <View style={styles.profileSection}>
         <Image
-          source={{ uri: user.profilePicture || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" }}
+          source={{ uri: user.profilePicture || "https://i.pravatar.cc/150?img=1" }}
           style={styles.avatar}
         />
         <Text style={styles.name}>{user.Username}</Text>
@@ -104,86 +97,28 @@ export default function UserTimelineScreen() {
       </View>
       </ImageBackground>
       
-     <View style={styles.tabBar}>
-  <TouchableOpacity
-    style={[styles.tabButton, activeTab === "posts" && styles.activeTab]}
-    onPress={() => setActiveTab("posts")}
-  >
-    <Text style={[styles.tabText, activeTab === "posts" && styles.activeTabText]}>Posts</Text>
-  </TouchableOpacity>
-  <TouchableOpacity
-    style={[styles.tabButton, activeTab === "reposts" && styles.activeTab]}
-    onPress={() => setActiveTab("reposts")}
-  >
-    <Text style={[styles.tabText, activeTab === "reposts" && styles.activeTabText]}>Reposts</Text>
-  </TouchableOpacity>
-</View>
+     
 
       {/* Timeline Section */}
-      {activeTab === "posts" && (
-        <>
-          <Text style={[styles.sectionHeader, { color: colors.text }]}>Posts by You</Text>
-          {posts?.length === 0 ? (
-            <Text style={[styles.noPosts, { color: colors.text }]}>No posts yet. Your Posts will Appear Here</Text>
-          ) : (
-            <FlatList
-              data={posts}
-              keyExtractor={item => item._id}
-              renderItem={({ item }) =>
-                <NewsCard post={item as PostWithAuthor} />}
-              contentContainerStyle={{ paddingBottom: 40 }}
-              showsVerticalScrollIndicator={false}
-              style={{ flex: 1, paddingHorizontal: 14 }}
-            />
-          )}
-        </>
+      <Text style={styles.sectionHeader}>Posts by You</Text>
+      {posts?.length === 0 ? (
+        <Text style={styles.noPosts}>No posts yet. Your Posts will Appear Here</Text>
+      ) : (
+        <FlatList
+          data={posts}
+          keyExtractor={item => item._id}
+          renderItem={({ item }) => 
+          <NewsCard post={item as PostWithAuthor} />}
+          contentContainerStyle={{ paddingBottom: 40 }}
+          showsVerticalScrollIndicator={false}
+          style={{ flex: 1,paddingHorizontal:14 }}
+        />
       )}
-
-        {activeTab === "reposts" && (
-        <>
-        <Text style={[styles.sectionHeader, { color: colors.text }]}>Reposts by You</Text>
-          {reposts?.length === 0 ? (
-            <Text style={[styles.noPosts, { color: colors.text }]}>No reposts yet. Your Reposts will Appear Here</Text>):(
-                reposts?.map((repost)=>(
-                        
-                         <View key={repost?.post._id} style={{paddingHorizontal:4, marginBottom:6}}>
-                        <RepostCard repost={repost} />
-                        </View>
-                ))
-                ) }
-        </>
-        )}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-        tabBar: {
-  flexDirection: "row",
-  justifyContent: "center",
-  alignItems: "center",
-  marginVertical: 12,
-  backgroundColor: "#e2e8f0",
-  borderRadius: 20,
-  marginHorizontal: 20,
-},
-tabButton: {
-  flex: 1,
-  paddingVertical: 10,
-  borderRadius: 20,
-  alignItems: "center",
-},
-activeTab: {
-  backgroundColor: "#2b2bff",
-},
-tabText: {
-  color: "#222",
-  fontWeight: "600",
-  fontSize: 16,
-},
-activeTabText: {
-  color: "#fff",
-},
   container: { flex: 1, backgroundColor: "#fff" },
   loader: {
     flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#fff"
