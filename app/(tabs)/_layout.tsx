@@ -25,12 +25,11 @@ export default function TabLayout() {
     
       screenOptions={{
         headerShown: false,
-        tabBarStyle: {  backgroundColor:colors.background , borderTopColor: 'transparent',position: "absolute",
+        tabBarStyle: {  backgroundColor:colors.background , borderTopColor: 'transparent',position: "absolute",height: 70,paddingTop: 10, 
           left: 0,
           right: 0,
           bottom: 0, },
-        tabBarInactiveTintColor: `${colors.text}`,
-        tabBarActiveBackgroundColor:"'#6d6c8aff',",
+        tabBarInactiveTintColor: '#8e8e93ff',
         
         tabBarActiveTintColor: '#007AFF',
         headerTintColor: '#e9e9e9ff',
@@ -66,10 +65,10 @@ export default function TabLayout() {
                 <Tabs.Screen
         name={tab.name}
         options={{
-                // tabBarShowLabel: false,
+                tabBarShowLabel: false,
           title: tab.title,
-          tabBarIcon: ({ size }) => (
-            <Ionicons name={tab.icon.name} size={size} color={colors.icon} />
+          tabBarIcon: ({ focused }) => (
+            <Ionicons name={tab.icon.name} size={focused ? 32 : tab.icon.size} color={focused ? colors.tabIconSelected : colors.tabIconDefault} />
           ),
         }}
       />
