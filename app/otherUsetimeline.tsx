@@ -10,17 +10,17 @@ import NewsCard from "@/components/Feed/NewsCard/NewsCard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Link, Stack } from "expo-router";
 import { Ionicons } from '@expo/vector-icons'; 
-const tabs: {
-  title: string;
-  name: string;
-  icon: { name: React.ComponentProps<typeof Ionicons>['name']; size: number };
-}[] = [
-  { title: 'Home', name: 'home', icon: { name: 'home', size: 28 } },
-  {title:"Post", name:"post", icon:{name:"add-circle", size:28}},
-  { title: 'Account', name: 'account', icon: { name: 'person', size: 28 } },
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import { lightTheme, darkTheme } from "@/constants/theme";
+const tabs = [
+  { title: 'Home', name: 'home', href: '/(tabs)/home' as const, icon: { name: 'home' as const, size: 28 } },
+  { title: 'Post', name: 'post', href: '/(tabs)/post' as const, icon: { name: 'add-circle' as const, size: 28 } },
+  { title: 'Account', name: 'account', href: '/(tabs)/account' as const, icon: { name: 'person' as const, size: 28 } },
 ];
 
 export default function OtherUserTimelineScreen() {
+  const colorScheme = useColorScheme();
+  const colors = colorScheme === "dark" ? darkTheme : lightTheme;
 
            const [user, setUser] = useState<any>(null);
   // Fetch user info and posts (custom hooks or your API logic)
@@ -54,17 +54,17 @@ export default function OtherUserTimelineScreen() {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
         <Stack.Screen
         options={{
           title: `Account `, // dynamic title
-                headerShown: false,
+          headerShown: false,
           headerTitleAlign: 'left',
           headerStyle: {
-                 backgroundColor: '#05032bff',
-                 
-           },
-          headerTitleStyle: { fontWeight: '700', fontSize: 18 },
+            backgroundColor: colors.background,
+          },
+          headerTintColor: colors.text,
+          headerTitleStyle: { fontWeight: '700', fontSize: 18, color: colors.text },
         }}
       />
       {/* User About Section */}
@@ -74,21 +74,21 @@ export default function OtherUserTimelineScreen() {
       imageStyle={{ borderRadius: 1 }} // optional: round the image corners
       resizeMode="cover"
       >
-        <View style={styles.profileSection}>
+        <View style={[styles.profileSection, { backgroundColor: colors.background }]}>
         <Image
           source={{ uri: user.profilePicture || "https://i.pravatar.cc/150?img=1" }}
           style={styles.avatar}
         />
-        <Text style={styles.name}>{user.Username}</Text>
-        <Text style={styles.username}>@{user.Username.toLowerCase()}</Text>
-        <Text style={styles.email}>{user.email}</Text>
-        {user.about ? <Text style={styles.about}>{user.about}</Text> : <Text style={styles.about}>This is my about info and so on</Text>}
+        <Text style={[styles.name, { color: colors.text }]}>{user.Username}</Text>
+        <Text style={[styles.username, { color: colors.tint }]}>@{user.Username.toLowerCase()}</Text>
+        <Text style={[styles.email, { color: colors.text }]}>{user.email}</Text>
+        {user.about ? <Text style={[styles.about, { color: colors.text }]}>{user.about}</Text> : <Text style={[styles.about, { color: colors.text }]}>This is my about info and so on</Text>}
         {/* Add followers/following, join date, etc. if needed */}
-        <View style={{height:"auto",paddingVertical:10,paddingHorizontal:12,flexDirection:"row",gap:34, position:"absolute",top:30, right:22, zIndex:50, borderRadius:40, backgroundColor:"#9b9abeff", }} >
+        <View style={{height:"auto",paddingVertical:10,paddingHorizontal:12,flexDirection:"row",gap:34, position:"absolute",top:30, right:22, zIndex:50, borderRadius:40, backgroundColor: colors.background, borderWidth: 1, borderColor: colors.borderColor }} >
                    {tabs.map((tab)=>(
                 <View key={tab.name} style={{borderWidth:2, padding:3,borderRadius:40,borderColor:"#ffff" ,alignItems:"center", justifyContent:"center"}} >
-        <Link href={`/${tab.name}`} style={{ alignItems: "center", justifyContent: "center" }}>
-        <Ionicons name={tab.icon.name} size={tab.icon.size} color={"blue"} />
+  <Link href={tab.href} style={{ alignItems: "center", justifyContent: "center" }}>
+        <Ionicons name={tab.icon.name} size={tab.icon.size} color={colors.tint} />
         </Link>
       </View>
          ))}
@@ -100,9 +100,9 @@ export default function OtherUserTimelineScreen() {
      
 
       {/* Timeline Section */}
-      <Text style={styles.sectionHeader}>Posts by You</Text>
+      <Text style={[styles.sectionHeader, { color: colors.text }]}>Posts by You</Text>
       {posts?.length === 0 ? (
-        <Text style={styles.noPosts}>No posts yet. Your Posts will Appear Here</Text>
+        <Text style={[styles.noPosts, { color: colors.icon }]}>No posts yet. Your Posts will Appear Here</Text>
       ) : (
         <FlatList
           data={posts}
@@ -111,7 +111,7 @@ export default function OtherUserTimelineScreen() {
           <NewsCard post={item as PostWithAuthor} />}
           contentContainerStyle={{ paddingBottom: 40 }}
           showsVerticalScrollIndicator={false}
-          style={{ flex: 1,paddingHorizontal:14 }}
+          style={{ flex: 1,paddingHorizontal:14, backgroundColor: colors.background }}
         />
       )}
     </ScrollView>
@@ -136,7 +136,6 @@ const styles = StyleSheet.create({
   },
         profileSection: {
                 backgroundColor: "#ffffffff",
-                opacity: 0.7,
                 padding: 16,
         },
   avatar: {

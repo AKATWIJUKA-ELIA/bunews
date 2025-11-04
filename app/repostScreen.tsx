@@ -10,7 +10,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { uploadImage } from "@/lib/utils";
-import { useTheme } from "./ThemeContext";
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { lightTheme, darkTheme } from "../constants/theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -25,8 +25,8 @@ const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
   const [image, setImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
         const { repost } = useRepost();
-           const { theme } = useTheme();
-          const colors = theme === "dark" ? darkTheme : lightTheme;
+           const colorScheme = useColorScheme();
+          const colors = colorScheme === "dark" ? darkTheme : lightTheme;
           const [user, setUser] = useState<any>(null);
 
             useEffect(() => {

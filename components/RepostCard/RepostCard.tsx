@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router"; // or useNavigation for React Navigation
 import { Id } from "@/convex/_generated/dataModel";
 import { formatDate } from "@/lib/utils";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import { lightTheme, darkTheme } from "@/constants/theme";
 
 
 // Types for your repost and post (adjust as needed)
@@ -43,39 +45,41 @@ type Props = {
 
 export default function RepostCard({ repost }: Props) {
   const router = useRouter();
+  const colorScheme = useColorScheme();
+  const colors = colorScheme === "dark" ? darkTheme : lightTheme;
 
   const handleOriginalPostPress = () => {
     router.push(`/post/${repost?.post._id}`);
   };
 
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { backgroundColor: colors.background, borderColor: colors.borderColor, borderWidth: 1 }]}>
       {/* Reposter Info */}
       <View style={styles.header}>
         <Image
           source={{ uri: repost?.repostContent.repostedBy.profilePicture || "https://www.gravatar.com/avatar/?d=mp" }}
-          style={styles.avatar}
+          style={[styles.avatar, { backgroundColor: colors.borderColor }]}
         />
-        <Text style={styles.username}>{repost?.repostContent.repostedBy.username} reposted</Text>
-        <Text style={styles.time}>{formatDate(repost?.repostContent.repostedAt||0)}</Text>
+        <Text style={[styles.username, { color: colors.text }]}>{repost?.repostContent.repostedBy.username} reposted</Text>
+        <Text style={[styles.time, { color: colors.icon }]}>{formatDate(repost?.repostContent.repostedAt||0)}</Text>
       </View>
 
       {/* Repost Comment and Image */}
-      {!!repost?.repostContent.content && <Text style={styles.comment}>{repost?.repostContent.content}</Text>}
+      {!!repost?.repostContent.content && <Text style={[styles.comment, { color: colors.text }]}>{repost?.repostContent.content}</Text>}
       {!!repost?.repostContent.repostImage && (
         <Image source={{ uri: repost.repostContent.repostImage }} style={styles.repostImage} />
       )}
 
       {/* Quoted Original Post (clickable) */}
-      <TouchableOpacity style={styles.quotedPost} onPress={handleOriginalPostPress} activeOpacity={0.9}>
+      <TouchableOpacity style={[styles.quotedPost, { backgroundColor: colors.background, borderLeftColor: colors.tint, borderColor: colors.borderColor, borderWidth: 1 }]} onPress={handleOriginalPostPress} activeOpacity={0.9}>
         <View style={styles.originalHeader}>
           <Image
             source={{ uri: repost?.post.author.profilePicture || "https://www.gravatar.com/avatar/?d=mp" }}
-            style={styles.originalAvatar}
+            style={[styles.originalAvatar, { backgroundColor: colors.borderColor }]}
           />
-          <Text style={styles.originalUsername}>{repost?.post.author.username}</Text>
+          <Text style={[styles.originalUsername, { color: colors.tint }]}>{repost?.post.author.username}</Text>
         </View>
-        <Text style={styles.originalContent}>{repost?.post.content}</Text>
+        <Text style={[styles.originalContent, { color: colors.text }]}>{repost?.post.content}</Text>
         {!!repost?.post.postImage && (
           <Image source={{ uri: repost?.post.postImage }} style={styles.originalImage} />
         )}

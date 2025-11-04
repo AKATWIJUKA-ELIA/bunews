@@ -6,7 +6,7 @@ import Header from "@/components/Header/Header";
 import useGetAllPosts from '@/hooks/useGetAllPosts';
 import Loader from '@/components/Loader/loader'
 import { lightTheme, darkTheme } from "../../constants/theme";
-import { useColorScheme } from '@/hooks/use-color-scheme.web';
+import { useColorScheme,Appearance } from '@/hooks/use-color-scheme';
 
 export default function NewsFeedScreen() {
 
@@ -31,7 +31,7 @@ export default function NewsFeedScreen() {
         }
 
   return (
-    <SafeAreaView edges={["top","bottom"]}  style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView edges={["top","bottom","left","right"]}  style={[styles.container, { backgroundColor: colors.background }]}>
          <Animated.View style={[styles.header, { transform: [{ translateY: headerTranslateY }],backgroundColor: colors.background }]}>
                 <Header />
          </Animated.View>

@@ -10,21 +10,22 @@ import NewsCard from "@/components/Feed/NewsCard/NewsCard";
 import { useLocalSearchParams } from "expo-router";
 import { Link, Stack } from "expo-router";
 import { Ionicons } from '@expo/vector-icons'; 
-import { useTheme } from "../ThemeContext";
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { lightTheme, darkTheme } from "../../constants/theme";
 const tabs: {
-  title: string;
+  title: string
+  href:  "/(tabs)/home" | "/(tabs)/post" | "/(tabs)/account";
   name: string;
   icon: { name: React.ComponentProps<typeof Ionicons>['name']; size: number };
 }[] = [
-  { title: 'Home', name: 'home', icon: { name: 'home', size: 28 } },
-  {title:"Post", name:"post", icon:{name:"add-circle", size:28}},
-  { title: 'Account', name: 'account', icon: { name: 'person', size: 28 } },
+  { title: 'Home',  href:"/(tabs)/home", name: 'home', icon: { name: 'home', size: 28 } },
+  {title:"Post",  href:"/(tabs)/post", name:"post", icon:{name:"add-circle", size:28}},
+  { title: 'Account', href:"/(tabs)/account",  name: 'account', icon: { name: 'person', size: 28 } },
 ];
 
 export default function OtherUserTimelineScreen() {
-           const { theme } = useTheme();
-          const colors = theme === "dark" ? darkTheme : lightTheme;
+           const colorScheme = useColorScheme();
+          const colors = colorScheme === "dark" ? darkTheme : lightTheme;
         const params = useLocalSearchParams();
         const user = params.user ? JSON.parse(params.user as string) : null;
  
@@ -80,7 +81,7 @@ export default function OtherUserTimelineScreen() {
         <View style={{height:"auto",paddingVertical:10,paddingHorizontal:12,flexDirection:"row",gap:34, position:"absolute",top:30, right:22, zIndex:50, borderRadius:40, backgroundColor:"#9b9abeff", }} >
                    {tabs.map((tab)=>(
                 <View key={tab.name} style={{borderWidth:2, padding:3,borderRadius:40,borderColor:"#ffff" ,alignItems:"center", justifyContent:"center"}} >
-        <Link href={`/${tab.name}`} style={{ alignItems: "center", justifyContent: "center" }}>
+        <Link href={tab.href} style={{ alignItems: "center", justifyContent: "center" }}>
         <Ionicons name={tab.icon.name} size={tab.icon.size} color={"blue"} />
         </Link>
       </View>

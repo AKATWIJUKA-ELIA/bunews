@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity,Dimensions  } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Link, useNavigation } from 'expo-router';
 import { PostWithAuthor } from '@/lib/types';
@@ -9,19 +9,18 @@ import { Id } from '@/convex/_generated/dataModel';
 import useGetPostComments from '@/hooks/useGetPostComments';
 import { FontAwesome } from '@expo/vector-icons';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useTheme } from "../../../app/ThemeContext";
 import { lightTheme, darkTheme } from "../../../constants/theme";
 import useGetAllReposts from '@/hooks/useGetAllReposts';
 import  * as Haptics from 'expo-haptics';
-
+import { useColorScheme } from '@/hooks/use-color-scheme';
 type RootStackParamList = {
   repostScreen: { post: PostWithAuthor };
   // add other routes here if needed
 };
 
-export default function NewsCard({ post }: { post: PostWithAuthor }) {
-         const { theme } = useTheme();
-        const colors = theme === "dark" ? darkTheme : lightTheme;
+export default function NewsCard({ post}: { post: PostWithAuthor }) {
+         const colorScheme = useColorScheme();
+        const colors = colorScheme === "dark" ? darkTheme : lightTheme;
                 const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
                 const { likePost } = useInteractWithPost();
                 const [liked, setLiked] = useState(false);
@@ -35,6 +34,26 @@ export default function NewsCard({ post }: { post: PostWithAuthor }) {
           const { data:comments} = useGetPostComments(post?._id as Id<"posts">);
         const { data:reposts } = useGetAllReposts();
         const repostsCount = reposts?.filter(r => r.originalPostId === post?._id).length || 0;
+        const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+
+        useEffect(() => {
+    if (post?.postImage) {
+      Image.getSize(
+        post.postImage,
+        (width, height) => {
+          const screenWidth = Dimensions.get('window').width - 32; // padding margin
+          const scaleFactor = width / screenWidth;
+          const imageHeight = height / scaleFactor;
+          setImageSize({ width: screenWidth, height: imageHeight });
+        },
+        (error) => {
+          console.warn('Failed to get image size', error);
+        }
+      );
+    }
+  }, [post?.postImage]);
+
+  if (!post?.postImage || !imageSize.width) return null;
 
   return (
           <View style={[styles.postContainer, { backgroundColor: colors.background, }]}>
@@ -65,18 +84,19 @@ export default function NewsCard({ post }: { post: PostWithAuthor }) {
     
     
             <View style={styles.contentwithImage}>
-    
-            <View>
-                    <Text style={[styles.content,{color:colors.text}]}>{post?.content}</Text>
+                <Text style={[styles.content,{color:colors.text}]}>{post?.content}</Text>
+            <View style={{ marginBottom: 8, }}>
+                   
                     <Link href={`/post/${post?._id}`} >
-                    {post?.postImage && <Image source={{ uri: post?.postImage }} style={styles.image} />}
+                    {post?.postImage && <Image source={{ uri: post?.postImage }} style={[styles.image, { width: imageSize.width, height: imageSize.height }]}
+                      />}
                     </Link>
             </View>
     
               <View style={styles.actions}>
                   <Link href={`/post/${post?._id}`} asChild>
                   <TouchableOpacity style={styles.action}>
-                <Ionicons name="chatbubble-outline" size={20} color="#0077ffff" />
+                <Ionicons name="chatbubble-outline" size={20} color="#555" />
                 <Text style={[styles.count,{color:colors.text}]}>{comments?.length}</Text>
               </TouchableOpacity>
                   </Link>
@@ -167,10 +187,9 @@ paddingLeft: 50,
 //     marginVertical: 1,
   },
   image: {
-    width: '100%',
-    height: 220,
     borderRadius: 10,
     marginVertical: 8,
+    zIndex:10
   },
   actions: {
     flexDirection: 'row',

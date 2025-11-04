@@ -8,7 +8,7 @@ import {
   Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from "../ThemeContext";
+import { useColorScheme, } from '@/hooks/use-color-scheme';
 import { lightTheme, darkTheme } from "../../constants/theme";
 import useGetAllPosts from '@/hooks/useGetAllPosts';
 import { formatDate } from '@/lib/utils';
@@ -25,9 +25,9 @@ import { ScrollView } from 'react-native';
   ]
 export default function SearchScreen() {
   const [query, setQuery] = useState('');
- 
-   const { theme } = useTheme();
-        const colors = theme === "dark" ? darkTheme : lightTheme;
+
+   const colorScheme = useColorScheme();
+        const colors = colorScheme === "dark" ? darkTheme : lightTheme;
         const { JustPosts, loading } = useGetAllPosts();
         const trendingPosts = JustPosts?.filter((post)=>(post.likes>2)).slice(0,5);
          const [searchResults, setSearchResults] = useState<typeof JustPosts>([]);

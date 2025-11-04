@@ -8,7 +8,7 @@ import { uploadImage } from "@/lib/utils";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { UpdateUser } from "@/lib/convex";
-import { useTheme } from "./ThemeContext";
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { lightTheme, darkTheme } from "../constants/theme";
 
 // Default image URLs
@@ -19,8 +19,8 @@ const DEFAULT_BANNER = "https://tangible-jaguar-208.convex.cloud/api/storage/359
 export default function EditProfileScreen() {
   // User state
     const [user, setUser] = useState<any>(null);
-    const { theme } = useTheme();
-        const colors = theme === "dark" ? darkTheme : lightTheme;
+    const colorScheme = useColorScheme();
+    const colors = colorScheme === "dark" ? darkTheme : lightTheme;
 
   const [loading, setLoading] = useState(false);
   const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
