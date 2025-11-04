@@ -30,7 +30,7 @@ export default function PostDetailsScreen() {
   const [comment_comment, setComment_comment] = useState('');
   const { postWithAuthor: post, loading } = useGetPostById(id);
   const { commentOnPost,commentOnComment } = useInteractWithPost();
-  const [CommentOnComment, setCommentOnComment] = useState<boolean>(false);
+  const [CommentOnComment, setCommentOnComment] = useState<{id:Id<"comments">,status:boolean}|null>(null);
   const { commentsWithAuthors: commentsData, } = useGetPostComments(id);
   const [user, setUser] = useState<any>(null);
           const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
@@ -76,8 +76,14 @@ export default function PostDetailsScreen() {
                 setComment('');
         }).catch((err)=>{console.log(err)});
   }
-  const handleCommentOnComment=async(comment:string,parentCommentId:Id<"comments">) => {
-
+  const handleCommentOnComment=async() => {
+        if(!comment_comment.trim()) return;
+        if(!CommentOnComment?.id) return;
+        await commentOnComment(id, CommentOnComment.id, user.User_id, comment_comment).then((res)=>{
+                console.log("Comment on comment response:", res);
+                setComment_comment('');
+                setCommentOnComment(null);
+        }).catch((err)=>{console.log(err)});
   }
 
   if (loading) {
@@ -115,7 +121,12 @@ export default function PostDetailsScreen() {
           {/* Comments Section */}
           <Text style={[styles.commentsHeader,{color:colors.text}]}>Comments</Text>
           {commentsData && commentsData.length > 0 ? commentsData.map((comment) => (
-            <View key={comment._id} style={[styles.commentItem, {backgroundColor: colors.background}]}>
+                <Link 
+                        href={{ pathname: "/comment/[comment]", params: { comment: JSON.stringify(comment) } }}
+                        // asChild
+                        key={comment._id}
+                                >
+            <View  style={[styles.commentItem, {backgroundColor: colors.background}]}>
               <View style={{flexDirection:"row", gap:12, justifyContent:"space-between"}} >
                 <Image source={{ uri: comment.user?.profilePicture||"" }} style={styles.commentAvatar} />
               <View style={{ flex: 1 }}>
@@ -127,12 +138,15 @@ export default function PostDetailsScreen() {
               </View>
                <Text style={[styles.commentText,{color:colors.text}]}>{comment.content}</Text>
                <View style={styles.actions}>
-                                <Link href={`/post/${post?._id}`} asChild>
-                                <TouchableOpacity style={styles.action} onPress={()=>setCommentOnComment(true)} >
+                                
+                                <TouchableOpacity style={styles.action} onPress={()=>comment._id && setCommentOnComment({
+                                        id:comment._id,
+                                        status:true
+                                })}>
                               <Ionicons name="chatbubble-outline" size={20} color="#555" />
                               <Text style={[styles.count,{color:colors.text}]}> ##</Text>
                             </TouchableOpacity>
-                                </Link>
+                               
                             
               
                             <TouchableOpacity style={styles.action}
@@ -145,7 +159,7 @@ export default function PostDetailsScreen() {
                   
                               <TouchableOpacity style={styles.action} >
                               <FontAwesome name="heart" size={20} color="#f52020ff" />
-                              <Text style={[styles.count,{color:colors.text}]}>{post?.likes}</Text>
+                              <Text style={[styles.count,{color:colors.text}]}>##</Text>
                             </TouchableOpacity>
                   
                             
@@ -154,6 +168,7 @@ export default function PostDetailsScreen() {
                             </TouchableOpacity>
                 </View>
             </View>
+             </Link>
           )): (
                 <Text style={{textAlign:'center', color:'#9a1515ff', marginTop:20}}>No comments yet. Be the first to comment!</Text>
           
@@ -161,7 +176,7 @@ export default function PostDetailsScreen() {
         </ScrollView>
         {CommentOnComment && 
         <View style={[styles.inputContainer, {backgroundColor: colors.background,position:"absolute", zIndex: 1, top:"75%",bottom:0, left:0, right:0}]}>
-                <TouchableOpacity onPress={()=>setCommentOnComment(false)} style={{position:"absolute", top:2,left:2}} >
+                <TouchableOpacity onPress={()=>setCommentOnComment(null)} style={{position:"absolute", top:2,left:2}} >
                         <Ionicons name="close" size={36} color={colors.icon}  />
                 </TouchableOpacity>
           <View style={[{backgroundColor: colors.background,flexDirection:"row",position:"absolute",gap:24, top:50, left:0, right:0}]}>
@@ -174,7 +189,7 @@ export default function PostDetailsScreen() {
             multiline
             returnKeyType="send"
           />
-                <TouchableOpacity onPress={() => handleComment(comment)} style={styles.SendButton}>
+                <TouchableOpacity onPress={() => handleCommentOnComment()} style={styles.SendButton}>
                         <Text style={{color:'#00a6ffff', fontWeight:'600'}}>Reply</Text>
                 </TouchableOpacity>
           </View>

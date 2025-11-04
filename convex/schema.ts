@@ -65,7 +65,8 @@ export default defineSchema({
                         timestamp: v.number(),
                 }))),
         updatedAt: v.number(),
-        }).index("by_post", ["postId"]),
+        }).index("by_post", ["postId"])
+        .index("by_parentComment", ["parentCommentId"]),
 
         followers: defineTable({
                 userId: v.id("users"),
