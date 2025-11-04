@@ -12,7 +12,7 @@ export default function NewsFeedScreen() {
 
         const colorScheme = useColorScheme();
         const colors = colorScheme === "dark" ? darkTheme : lightTheme;
-        const { postsWithAuthors: posts } = useGetAllPosts();
+        const { postsWithAuthors: posts,loading } = useGetAllPosts();
         // const newsPosts = posts?.filter(post => post !== undefined);
         const scrollY = useRef(new Animated.Value(0)).current;
         const headerTranslateY = scrollY.interpolate({
@@ -26,9 +26,9 @@ export default function NewsFeedScreen() {
                 setNewsPosts(posts);
         }, [posts]);
         
-        // if (loading) {
-        //         return <Loader />;
-        // }
+        if (loading) {
+        return <Loader />;
+        }
 
   return (
     <SafeAreaView edges={["top","bottom"]}  style={[styles.container, { backgroundColor: colors.background }]}>
