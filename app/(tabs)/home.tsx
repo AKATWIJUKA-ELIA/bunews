@@ -1,17 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text,SafeAreaView, StyleSheet, Image, Animated, FlatList } from 'react-native';
+import { View, Text, StyleSheet, Image, Animated, FlatList } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import FeedList from "@/components/Feed/FeedList";
 import Header from "@/components/Header/Header";
 import useGetAllPosts from '@/hooks/useGetAllPosts';
 import Loader from '@/components/Loader/loader'
-import { useTheme } from "../ThemeContext";
 import { lightTheme, darkTheme } from "../../constants/theme";
+import { useColorScheme } from '@/hooks/use-color-scheme.web';
 
 export default function NewsFeedScreen() {
 
-        const { theme } = useTheme();
-        const colors = theme === "dark" ? darkTheme : lightTheme;
-        const { postsWithAuthors: posts, loading } = useGetAllPosts();
+        const colorScheme = useColorScheme();
+        const colors = colorScheme === "dark" ? darkTheme : lightTheme;
+        const { postsWithAuthors: posts } = useGetAllPosts();
         // const newsPosts = posts?.filter(post => post !== undefined);
         const scrollY = useRef(new Animated.Value(0)).current;
         const headerTranslateY = scrollY.interpolate({
@@ -30,7 +31,7 @@ export default function NewsFeedScreen() {
         // }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView edges={["top","bottom"]}  style={[styles.container, { backgroundColor: colors.background }]}>
          <Animated.View style={[styles.header, { transform: [{ translateY: headerTranslateY }],backgroundColor: colors.background }]}>
                 <Header />
          </Animated.View>

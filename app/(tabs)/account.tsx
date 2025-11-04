@@ -11,7 +11,7 @@ import useLogOut from "@/hooks/useLogOut";
 import { UserProfile } from "@/lib/types";
 import { useTheme } from "../ThemeContext";
 import { lightTheme, darkTheme } from "../../constants/theme";
-
+import { useColorScheme,Appearance } from '@/hooks/use-color-scheme';
 export interface User {
         _id?: Id<"users">|undefined,
         username?: string,
@@ -43,17 +43,21 @@ export default function SettingsScreen() {
   })();
 }, []);
 
+ const colorScheme = useColorScheme();
 
  
-  const [darkMode, setDarkMode] = useState(false);
-  const { theme, setTheme } = useTheme();
+
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const colors = theme === "dark" ? darkTheme : lightTheme;
+  const colors = colorScheme === "dark" ? darkTheme : lightTheme;
         const handleLogOut = async () => {
                 await signOut();
                 setUser(null);
                 router.replace('/login');
         }
+
+ const handleThemeChange = () => {
+         Appearance.setColorScheme(colorScheme==="dark"?"light":"dark");
+ };
        if(!user){
                 return <Loader />;
         }
@@ -90,8 +94,8 @@ export default function SettingsScreen() {
         <Ionicons name="moon-outline" size={22} color="#007AFF" />
         <Text style={styles.settingLabel}>Dark Mode</Text>
       <Switch
-        value={theme === "dark"}
-        onValueChange={() => setTheme(theme === "dark" ? "light" : "dark")}
+        value={colorScheme === "dark"}
+        onValueChange={() => handleThemeChange()}
       />
       </View>
 
