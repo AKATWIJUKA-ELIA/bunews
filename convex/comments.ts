@@ -18,6 +18,24 @@ export const CommentOnPost = mutation({
                 }catch{
                         return {success:false,message:"Error adding comment",status:500,comment:null};
                 }}}) 
+export const CommentOnComment = mutation({
+                args:{
+                        postId:v.id("posts"),
+                        parentCommentId:v.id("comments"),
+                        commentorId:v.id("users"),
+                        content:v.optional(v.string()),
+                        commentImages: v.optional(v.array(v.string())),
+                },handler:async(ctx,args)=>{
+                        try{
+                        const comment = await ctx.db.insert("comments",{
+                                ...args,
+                                likes:0,
+                                updatedAt:Date.now(),
+                        }) 
+                        return {success:true,message:"Comment added successfully",status:200,comment:comment};
+                }catch{
+                        return {success:false,message:"Error adding comment",status:500,comment:null};
+                }}}) 
 
 export const GetCommentsByPost = query({
         args:{

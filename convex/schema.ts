@@ -8,6 +8,8 @@ export default defineSchema({
                 postImage: v.optional(v.string()),
                 category: v.string(),
                 likes: v.number(),
+                viewsCount: v.optional(v.number()),
+                // Do we really need This Reposts Field here?
                 reposts: v.optional(v.array(v.object({
                         repostorId: v.string(),
                         timestamp: v.number(),
@@ -16,10 +18,11 @@ export default defineSchema({
         .index("byCategory", ["category"]),
         reposts: defineTable({
                 reposterId: v.id("users"),
-                originalPostId: v.id("posts"),
+                // Since we can also Repost Comments
+                originalPostId: v.id("posts")||v.id("comments"),
                 content: v.string(),
                 repostImage: v.optional(v.string()),
-        })
+        }) 
         .index("byOriginalPost", ["originalPostId"])
         .index("byReposter", ["reposterId"]),
 
@@ -51,11 +54,19 @@ export default defineSchema({
 
         comments: defineTable({
         postId: v.id("posts"),
+        parentCommentId: v.optional(v.id("comments")),
         commentorId: v.id("users"),
-        content: v.string(),
+        content: v.optional(v.string()),
+        commentImages: v.optional(v.array(v.string())),
         likes: v.number(),
+        viewsCount:v.optional(v.number()),
+        reposts: v.optional(v.array(v.object({
+                        repostorId: v.string(),
+                        timestamp: v.number(),
+                }))),
         updatedAt: v.number(),
         }).index("by_post", ["postId"]),
+
         followers: defineTable({
                 userId: v.id("users"),
                 followerId: v.id("users"),
