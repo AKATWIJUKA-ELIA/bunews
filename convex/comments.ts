@@ -43,6 +43,16 @@ export const GetCommentsByPost = query({
         },handler:async(ctx,args)=>{
                 const comments = await ctx.db.query("comments")
                 .withIndex("by_post", (q) => q.eq("postId", args.postId))
+                .filter((q) => q.eq(q.field("parentCommentId"), undefined))
+                .collect();
+                return comments;
+        }})
+export const GetRepliesByComment = query({
+        args:{
+                parentCommentId: v.id("comments"),
+        },handler:async(ctx,args)=>{
+                const comments = await ctx.db.query("comments")
+                .withIndex("by_parentComment", (q) => q.eq("parentCommentId", args.parentCommentId))
                 .collect();
                 return comments;
         }})
