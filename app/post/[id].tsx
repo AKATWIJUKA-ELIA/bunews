@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TextInput, KeyboardAvoidingView, Platform, Button, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TextInput, KeyboardAvoidingView, Platform, Button, TouchableOpacity, Dimensions } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { Id } from '@/convex/_generated/dataModel';
@@ -12,8 +12,9 @@ import useGetPostComments from '@/hooks/useGetPostComments';
 import { formatDate } from '@/lib/utils';
 import { CommentWithUser } from '@/lib/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useTheme } from "../ThemeContext";
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { lightTheme, darkTheme } from "../../constants/theme";
+import { Ionicons } from '@expo/vector-icons';
 
 
 
@@ -25,9 +26,11 @@ export default function PostDetailsScreen() {
   const { commentOnPost, } = useInteractWithPost();
   const { commentsWithAuthors: commentsData, } = useGetPostComments(id);
   const [user, setUser] = useState<any>(null);
+          const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+  const [showImage,setShowImage] = useState(false)
 
-   const { theme } = useTheme();
-        const colors = theme === "dark" ? darkTheme : lightTheme;
+   const colorScheme = useColorScheme();
+        const colors = colorScheme === "dark" ? darkTheme : lightTheme;
 
     useEffect(() => {
   (async () => {
@@ -39,6 +42,25 @@ export default function PostDetailsScreen() {
     }
   })();
 }, []);
+
+
+
+        useEffect(() => {
+    if (post?.postImage) {
+      Image.getSize(
+        post.postImage,
+        (width, height) => {
+          const screenWidth = Dimensions.get('window').width - 32; // padding margin
+          const scaleFactor = width / screenWidth;
+          const imageHeight = height / scaleFactor;
+          setImageSize({ width: screenWidth, height: imageHeight });
+        },
+        (error) => {
+          console.warn('Failed to get image size', error);
+        }
+      );
+    }
+  }, [post?.postImage]);
 
   const handleComment=async(comment:string) => {
         if(!comment.trim()) return;
@@ -74,7 +96,21 @@ export default function PostDetailsScreen() {
           contentContainerStyle={{ paddingBottom: 90 }} // leave space for the input
           keyboardShouldPersistTaps="handled"
         >
-          <NewsCard post={post as PostWithAuthor} />
+          {/* Card without inline image to avoid duplication */}
+          <TouchableOpacity  onPress={()=>setShowImage(true)}style={{zIndex:50}} >
+                <NewsCard post={post as PostWithAuthor} />
+          </TouchableOpacity>
+          
+
+          {/* Full-size post image preserving aspect ratio */}
+          {/* {post?.postImage && imageRatio && (
+            <Image
+              source={{ uri: post.postImage }}
+              resizeMode="contain"
+              style={{ width: '100%', aspectRatio: imageRatio, borderRadius: 10, marginTop: 6, marginBottom: 12 }}
+            />
+          )} */}
+        
 
           {/* Comments Section */}
           <Text style={styles.commentsHeader}>Comments</Text>
@@ -109,6 +145,18 @@ export default function PostDetailsScreen() {
                 </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
+        {post?.postImage && showImage && (
+                      <View style={{position:"absolute",left:0,right:0,top:0,bottom:0,backgroundColor:"#000000ff"}} >
+                        <TouchableOpacity onPress={()=>{setShowImage(false)}} >
+                                <Ionicons name="close" size={36} color={colors.icon} style={{position:"absolute", top:2,right:32}} />
+                        </TouchableOpacity>
+                        <Image
+                        source={{ uri: post?.postImage }}
+                        resizeMode="contain"
+                         style={[ {width:imageSize.width,height:imageSize.height, position:"absolute", borderRadius: 10,right:1,left:1,top:"25%", } ]}
+                      />
+                      </View>
+                    )}
     </View>
   );
 }

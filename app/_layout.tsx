@@ -6,19 +6,17 @@ import 'react-native-reanimated';
 import { useColorScheme,Appearance } from '@/hooks/use-color-scheme';
 import { ConvexProvider, ConvexReactClient } from "convex/react";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { ThemeProvider, useTheme } from "./ThemeContext";
-import { lightTheme, darkTheme } from "../constants/theme";
+
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
   unsavedChangesWarning: false,
 });
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-    const colors = colorScheme === "dark" ? darkTheme : lightTheme;
+ const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider>
+//     <ThemeProvider>
        <GestureHandlerRootView>
         <ConvexProvider client={convex}>
          <StatusBar
@@ -32,6 +30,7 @@ export default function RootLayout() {
       <Stack
         screenOptions={{
           statusBarStyle: colorScheme === 'light' ? 'dark' : 'light',
+          
         //   statusBarBackgroundColor: theme === 'dark' ? '#000' : '#fff',
         }}
       >        
@@ -43,6 +42,6 @@ export default function RootLayout() {
       </Stack>
       </ConvexProvider>
        </GestureHandlerRootView>
-    </ThemeProvider>
+//     </ThemeProvider>
   );
 }

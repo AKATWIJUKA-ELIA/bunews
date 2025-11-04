@@ -1,8 +1,8 @@
 import { Stack, Tabs } from 'expo-router';
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from "../ThemeContext";
 import { lightTheme, darkTheme } from "../../constants/theme";
+import { useColorScheme,Appearance } from '@/hooks/use-color-scheme';
 
 
 const tabs: {
@@ -18,8 +18,8 @@ const tabs: {
   { title: 'Account', name: 'index', icon: { name: 'person', size: 28 } },
 ];
 export default function TabLayout() {
-        const { theme } = useTheme();
-  const colors = theme === "dark" ? darkTheme : lightTheme;
+        const colorScheme = useColorScheme();
+  const colors = colorScheme === "dark" ? darkTheme : lightTheme;
   return (
     <Tabs
     

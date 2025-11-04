@@ -19,9 +19,9 @@ import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { uploadImage } from '@/lib/utils';
 import { fetch } from 'expo/fetch';
-import { File } from 'expo-file-system';
+// import { File } from 'expo-file-system';
 import { router } from 'expo-router';
-import { useTheme } from "../ThemeContext";
+import { useColorScheme, } from '@/hooks/use-color-scheme';
 import { lightTheme, darkTheme } from "../../constants/theme";
 import  * as Haptics from 'expo-haptics';
 
@@ -30,8 +30,8 @@ export default function CreatePostScreen() {
   const [selectedImage, setSelectedImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
   const [category, setCategory] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-   const { theme } = useTheme();
-          const colors = theme === "dark" ? darkTheme : lightTheme;
+   const colorScheme = useColorScheme();
+          const colors = colorScheme === "dark" ? darkTheme : lightTheme;
 //   const user = AsyncStorage.getItem('user');
         const [user, setUser] = useState<any>(null);
     const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
