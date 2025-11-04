@@ -2,7 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
-
+import { useColorScheme } from 'react-native';
+import { lightTheme, darkTheme } from "../../constants/theme";
 const notifications = [
   {
     id: '1',
@@ -31,7 +32,8 @@ const notifications = [
 ];
 
 export default function NotificationsScreen() {
-
+        const colorScheme = useColorScheme();
+                  const colors = colorScheme === "dark" ? darkTheme : lightTheme;
   const renderIcon = (type: string) => {
     switch (type) {
       case 'like':
@@ -41,13 +43,13 @@ export default function NotificationsScreen() {
       case 'mention':
         return <Ionicons name="at" size={20} color="#1d9bf0" />;
       default:
-        return <Ionicons name="notifications-outline" size={20} color="#555" />;
+        return <Ionicons name="notifications-outline" size={20} color={colors.icon} />;
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Notifications</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={[styles.header, { color: colors.text }]}>Notifications</Text>
 
       
       <FlatList
@@ -62,16 +64,16 @@ export default function NotificationsScreen() {
             {renderIcon(item.type)}
             <Image source={{ uri: item.avatar }} style={styles.avatar} />
             <View style={{ flex: 1 }}>
-              <Text style={styles.text}>
-                <Text style={styles.user}>{item.user} </Text>
+              <Text style={[styles.text, { color: colors.text }] }>
+                <Text style={[styles.user, { color: colors.text }]}>{item.user} </Text>
                 {item.message}
               </Text>
-              <Text style={styles.time}>{item.time}</Text>
+              <Text style={[styles.time, { color: colors.icon }]}>{item.time}</Text>
             </View>
           </TouchableOpacity>
         </Link>
         )}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        ItemSeparatorComponent={() => <View style={[styles.separator, { backgroundColor: colors.borderColor }]} />}
       />
     </View>
   );
@@ -80,14 +82,13 @@ export default function NotificationsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     paddingHorizontal: 16,
   },
   header: {
     fontSize: 22,
     fontWeight: '700',
     paddingVertical: 14,
-    marginTop:3,
+    marginTop:15,
   },
   notificationItem: {
     flexDirection: 'row',
@@ -102,18 +103,15 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 14,
-    color: '#333',
   },
   user: {
     fontWeight: '600',
   },
   time: {
-    color: '#888',
     fontSize: 12,
     marginTop: 2,
   },
   separator: {
     height: 1,
-    backgroundColor: '#eee',
   },
 });

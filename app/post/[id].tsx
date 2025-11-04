@@ -58,8 +58,9 @@ export default function PostDetailsScreen() {
         options={{
           title: `Post `,
           headerShown: true,
+          headerTintColor:`${colors.text}`,
           headerTitleAlign: 'left',
-          headerStyle: { backgroundColor: `${colors.background}` },
+          headerStyle: { backgroundColor: `${colors.background}`, },
           headerTitleStyle: { fontWeight: '700', fontSize: 18, color: `${colors.text}` },
         }}
       />
@@ -93,9 +94,9 @@ export default function PostDetailsScreen() {
           
           )}
         </ScrollView>
-        <View style={styles.inputContainer}>
+        <View style={[styles.inputContainer, {backgroundColor: colors.background}]}>
           <TextInput
-            placeholder="what do you say about this 🤔?"
+            placeholder="Reply 🫴?"
             style={styles.input}
             placeholderTextColor="#aaa"
             value={comment}
