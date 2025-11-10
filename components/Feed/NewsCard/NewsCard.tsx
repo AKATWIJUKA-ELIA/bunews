@@ -3,7 +3,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity,Dimensions  } from 'rea
 import { Ionicons } from '@expo/vector-icons';
 import { Link, useNavigation } from 'expo-router';
 import { PostWithAuthor } from '@/lib/types';
-import { formatDate } from '@/lib/utils';
+import { formatDate,timeAgo } from '@/lib/utils';
 import useInteractWithPost from '@/hooks/useInteractWithPost';
 import { Id } from '@/convex/_generated/dataModel';
 import useGetPostComments from '@/hooks/useGetPostComments';
@@ -76,7 +76,10 @@ export default function NewsCard({ post}: { post: PostWithAuthor }) {
              
               <View  style={{ flexDirection: 'row', gap: 20, alignItems: 'center' , flex: 0 }}>
                 <Text style={[styles.author,{color:colors.text}]}>{post?.author?.username} </Text>
-                <Text style={[styles.username,{color:colors.icon}]}>@{post?.author?.username} • <Text style={styles.date}>{formatDate(post?._creationTime||0)}</Text></Text>
+                <Text style={[styles.username,{color:colors.icon}]}>@{post?.author?.username} • <Text style={styles.date}>{timeAgo(post?._creationTime||"")
+                //  formatDate(post?._creationTime||0)
+                 }
+                 </Text></Text>
                 {/* <Text style={styles.follow}>follow</Text> */}
               </View>
             </View>
